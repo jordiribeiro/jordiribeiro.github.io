@@ -6,6 +6,13 @@ function addZero(i) {
     }
     return i;
 }
+function dataAgora() {
+     var d = new Date();
+     var y=d.getFullYear();
+     var m=d.getUTCMonth()+1;
+     var day=d.getUTCDate();
+     return (day + "/" + m + "/" + y);
+}
 
 function horaAgora() {
     var d = new Date();
@@ -22,12 +29,23 @@ function getMaxOfArray(numArray) {
 }
 
  function atualizaInformacoesNaTelaUDI(snapshotDoBanco){
+   var txt="<table border='1' class='table'>";
+   txt+="<th class='text-center '>Numero Cham.</th><th class='text-center '>Oferta Chamado.</th><th class='text-center '>Fila do Chamado</th><th class='text-center '>Data de Vencimento</th>"
 	var todos        = snapshotDoBanco.todos,
 		timestamp    = snapshotDoBanco.timestamp,
 		count        = snapshotDoBanco.todos.length,
 		chamados     = [];
+    var chamadosvencidos = [];
+    var chamadosTabela = [];
+    var tabelaobj = {
+       numchamado:0,
+      oferta:"",
+      fila:"",
+      conclusaoprev:""};
 
-	aguardando = tratamento = outros = 	aguardandoIE = 	tratamentoIE =  aguardandoWMS =  tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES =  aguardandoTMS = tratamentoTMS= 0;
+	 proximovencer = naovencido = vencido = aguardando = tratamento = outros = 	aguardandoIE = 	tratamentoIE =  aguardandoWMS =  tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES =  aguardandoTMS = tratamentoTMS= 0;
+
+//  console.log(dataAgora());
 
 	todos.forEach(chamado => {
 		var status = chamado.status;
@@ -43,6 +61,37 @@ function getMaxOfArray(numArray) {
 			ceng   = oferta.substr(oferta.indexOf("(CENG"));
 		descobreOferta(ceng, chamado.status);
 	});
+
+  todos.forEach(chamadosvencidos => {
+    var stat = chamadosvencidos.situacao;
+    stat == "vencido" ? vencido++ : (stat == "proximo-vencer" ? proximovencer++  : naovencido++);
+  });
+
+  todos.forEach(chamadosvencidos =>{
+    var tempstat = chamadosvencidos.situacao;
+    if(tempstat == "proximo-vencer"){
+      //  console.log(chamadosTabela[x].numchamado)
+      // tabelaobj.numchamado = c;
+      // tabelaobj.oferta= chamadosvencidos.oferta;
+      // tabelaobj.fila=chamadosvencidos.fila;
+      // tabelaobj.conclusaoprev=chamadosvencidos.conclusao_prevista;
+      // chamadosTabela.push(tabelaobj);
+      txt+="<tr>"+"<td>"+chamadosvencidos.codigo_solicitacao +"</td>"+ "<td>"+ chamadosvencidos.oferta +"</td>" +"<td>"+chamadosvencidos.fila +"</td>" + "<td>"+chamadosvencidos.conclusao_prevista +"</td>"+"</tr>";
+
+      localStorage.setItem("arraychamdados",chamadosvencidos);
+    }
+  });
+  //console.log(chamadosTabela);
+  // var txt="<table border='1' class='table'>"
+
+ //   for(x=0;x<chamadosTabela.length;x++){
+ //     console.log(chamadosTabela[x].numchamado)
+ //     txt+="<tr>"+"<td>"+ chamadosTabela[x].numchamado +"</td>"+ "<td>"+ chamadosTabela[x].oferta +"</td>" +"<td>"+chamadosTabela[x].fila +"</td>" + "<td>"+chamadosTabela[x].conclusaoprev +"</td>"+"</tr>";
+ // }
+txt+="</table>";
+//console.log(txt);
+$("#tabelaPertoVencer").html(txt);
+
 
 	yMax = Math.ceil(getMaxOfArray( [
 							aguardandoIE,tratamentoIE,
@@ -93,6 +142,8 @@ function pushDeDados(totaisUDI){
 			arrayTratamento.shift();
 			arrayOutros.shift();
 			arrayLabel.shift();
+      arrayVencido.shift();
+      arrayVencido.shift();
 		}
 
 		//Insere os novos elementos na calda
@@ -100,6 +151,7 @@ function pushDeDados(totaisUDI){
 		arrayAguardando.push(totaisUDI[1]);
 		arrayOutros.push(outros);
 		arrayLabel.push(horaAgora());
+
 
 		//Seta todos os dados em localStorage
 		localStorage.setItem("arrayAguardando", JSON.stringify(arrayAguardando));
@@ -130,6 +182,7 @@ async function rederizaOsGraficos(totaisUDI){
     montaGraficoMES();
 		montaGraficoNovoMES();
     montaGraficoTMS();
+    montaGraficoStatus()
 		montaChamadosBarraSeparados(totaisUDI);
 
 		$('#totalUDI').text(totaisUDI[0]+totaisUDI[1]);

@@ -14,8 +14,8 @@ var aguardando,	tratamento,
 	aguardandoPMcycle, tratamentoPMcycle;
 
 var minQRenderizou      = 0,
-	tamanhoGrafDeLinhas = 30,
-	yMax                = 100,
+	tamanhoGrafDeLinhas = 500,
+	yMax                = 500,
 	optionsDefault2     = {},
 	proxSave,
 	minSalvou,
@@ -34,11 +34,16 @@ if(localStorage.getItem("arrayAguardando")){
 }
 
 var textoTratamento = "Tratamento",
-	textoAguardando = "Aguardando";
+	textoAguardando = "Aguardando",
+	textoVencido = "Vencido",
+	textoProx = "ProximoVencer",
+	textoNaoVenc = "No prazo";
 
 var bgTratamento          = ['rgba(0, 148, 50,1.0)','rgba(0, 148, 50,1.0)'],
 	borderTratamento      = ['rgba(32, 191, 107,0.95)','rgba(32, 191, 107,1.0)'],
 	bgAguarTratamento     = ['rgba(234, 32, 39,1.0)','rgba(234, 32, 39,1.0)'],
+	bgProxVenc						=['rgba(244, 238, 66)','rgba(244, 238, 66)'],
+	borderProxVenc			=['rgba(244, 238, 66)','rgba(244, 238, 66)'],
 	borderAguarTratamento = ['rgba(235, 59, 90, 1.0)','rgba(235, 59, 90, 1.0)'];
 	bgOutros              = ['rgba(154, 236, 219,0.95)','rgba(154, 236, 219,0.95)'],
 	borderOutros          = ['rgba(154, 236, 219,1.0)','rgba(154, 236, 219,1.0)'];
@@ -106,6 +111,37 @@ function setaOptionsDefault2(){
 
 
 		borderWidth: 1
+	};
+}
+
+function setaOptionsDefault3(){
+	optionsDefault3  = {
+	    scaleBeginAtZero: true,
+	    responsive: true,
+	    scaleStartValue : 0,
+		tooltips: {
+	            mode: 'point'
+	    },
+		scales: {
+			xAxes: [{
+				stacked: true,
+				ticks: {
+          beginAtZero: true,
+					min: 0,
+					weight: 1,
+            }
+			}],
+			yAxes: [{
+				stacked: true,
+				ticks: {
+          beginAtZero: true,
+					min: 0,
+					max: yMax,
+					steps: 10
+          }
+			}]
+		},
+			borderWidth: 1
 	};
 }
 // function todosChamadosPie(totaisUDI){
@@ -553,5 +589,49 @@ function montaGraficoTMS(){
 			]
 		},
 	    options: optionsDefault2
+	});
+}
+/*function montaGraficoStatus(){
+	var divGrafico = document.getElementById('graficoStatus').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [vencido + "" , proximovencer + "" , naovencido +""],
+			datasets: [
+				{
+					label: textoVencido,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [vencido, 0 ,0]
+				},
+				{
+					label: textoProx,
+					backgroundColor: bgProxVenc,
+					borderColor: borderProxVenc,
+					data: [0, proximovencer]
+				},
+				{
+					label: textoNaoVenc,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [0,naovencido]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}*/
+
+function montaGraficoStatus(){
+	var divGrafico = document.getElementById('graficoStatus').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencido, naovencido , proximovencer]}	]
+		},
+		options: {}
 	});
 }
