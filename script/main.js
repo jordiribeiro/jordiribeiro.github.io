@@ -45,7 +45,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
     conclusaoprev: ""
   };
 
-  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = 0;
+  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = 0;
 
   //  console.log(dataAgora());
 
@@ -55,13 +55,13 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
     var oferta = chamado.oferta,
       sti = oferta.substr(oferta.indexOf("(STI"));
-    descobreOferta(sti, chamado.status);
+    descobreOferta(sti, chamado.status,chamado.situacao);
   });
 
   todos.forEach(chamado => {
     var oferta = chamado.oferta,
       ceng = oferta.substr(oferta.indexOf("(CENG"));
-    descobreOferta(ceng, chamado.status);
+    descobreOferta(ceng, chamado.status,chamado.situacao);
   });
 
   todos.forEach(chamadosvencidos => {
@@ -179,61 +179,85 @@ async function rederizaOsGraficos(totaisUDI) {
     montaGraficoMES();
     montaGraficoNovoMES();
     montaGraficoTMS();
-    montaGraficoStatus()
+    montaGraficoStatus();
+    montaGraficoStatusIAL();
+    montaGraficoStatusCamisa10();
+    montaGraficoinventarioEle();
+    montaGraficowmsfab();
+    montaGraficoqlick();
+   montaGraficopm();
+   montaGrafimofab();
+   montaGraficosegamb();
+   montaGraficomesleg();
+   montaGraficonovmes();
+   montaGraficostattms();
     //montaChamadosBarraSeparados(totaisUDI);
 
-    console.log(totaisUDI)
+
     $('#totalUDI').html(totaisUDI[0] + totaisUDI[1]);
+    $('#camisa10status').html(naovencidocamisa10 +"-"+proximovencercamisa10+"-"+vencidocamisa10);
+    $('#interactstatus').html(naovencidointeract +" - "+proximovencerinteract+" - "+vencidointeract);
 
     minQRenderizou = minutoAtual;
   }
 }
 
-function descobreOferta(sti, status) {
+function descobreOferta(sti, status,situacao) {
   var ofertaInvetarioEletronico = ["(STI15973)", "(STI15974)", "(STI15975)", "(STI15976)", "(STI15977)", "(STI15978)", "(STI15979)", "(STI15980)", "(STI4591)", "(STI4673)"],
     ofertaWMS = ["(STI8053)", "(STI8057)", "(STI8058)", "(STI8061)", "(STI8062)", "(STI8063)", "(STI8066)", "(STI8067)", "(STI8071)", "(STI8072)", "(STI8073)", "(STI8075)", "(STI9649)", "(STI9651)", "(STI9652)", "(STI10250)", "(STI10251)", "(STI10252)", "(STI10259)", "(STI11868)", "(STI12173)", "(STI12788)", "(STI12789)", "(STI13220)", "(STI13221)", "(STI13222)", "(STI13223)", "(STI8076)", "(STI8077)", "(STI8078)", "(STI8079)", "(STI8211)", "(STI9637)", "(STI9640)", "(STI9641)", "(STI9642)", "(STI9643)", "(STI9645)", "(STI9647)", "(STI9648)", "(STI12177)", "(STI12181)", "(STI13218)", "(STI13219)", "(STI12779)", "(STI12780)", "(STI12781)", "(STI12782)", "(STI12783)", "(STI12784)", "(STI12785)", "(STI12786)", "(STI12787)", "(STI10137)"];
   ofertaQlikView = ["(STI11854)", "(STI11855)", "(STI11856)", "(STI11857)", "(STI11858)"]
   ofertaCamisa10 = ["(STI13565)", "(STI13566)", "(STI13567)"],
     ofertaPMcycle = ["(STI13261)", "(STI14347)", "(STI14348)", "(CENG14346)"],
     ofertaModFabril = ["(STI14049)", "(STI13990)", "(STI13991)", "(STI13993)", "(STI11981)"],
-    ofertaInterAct = ["(STI12552)", "(STI12551)", "(STI12546)", "(STI12540)", "(STI12559)", "(STI12552)"],
+    ofertaInterAct = ["(STI12551)","(STI12549)","(STI12559)","(STI12553)","(STI12540)","(STI12550)","(STI12548)","(STI12546)","(STI12555)","(STI12554)","(STI12552)","(STI16094)","(STI12545)"],
     ofertaMES = ["(STI1324)", "(STI1519)", "(STI1528)", "(STI1529)", "(STI8106)", "(STI12230)", "(STI1529)"],
     ofertaNovoMES = ["(STI12156)", "(STI12150)", "(STI12151)", "(STI12155)", "(STI12153)", "(STI12154)", "(STI12152)", "(STI12164)", "(STI12163)", "(STI12166)", "(STI12165)", "(STI12168)", "(STI12162)", "(STI12167)", "(STI12161)", "(STI12157)", "(STI12159)", "(STI12158)", "(STI12160)", "(STI15330)"],
-    ofertaTMS = ["(STI8207)", "(STI7814)", "(STI12237)", "(STI7816)", "(STI7815)", "(STI7756)", "(STI7755)"],
+    ofertaTMS = ["(STI15460)","(STI5579)","(STI5605)","(STI5522)","(STI15458)","(STI15654)","(STI15459)","(STI15461)","(STI12237)","(STI5705)","(STI5731)","(STI5648)","(STI7846)","(STI7847)","(STI15653)","(STI7815)","(STI7816)","(STI15462)","(STI8207)"],
     ofertaSegAmbev = ["(STI11916)", "(STI11917)", "(STI11918)", "(STI11919)", "(STI11920)", "(STI11921)", "(STI11922)", "(STI11923)"];
 
   if (ofertaInvetarioEletronico.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoIE++ : (status == "Em tratamento" ? tratamentoIE++ : "")
+    status == "Aguardando tratamento" ? aguardandoIE++ : (status == "Em tratamento" ? tratamentoIE++ : "");
+    situacao == "vencido" ? vencidoinventarioEle++ : (situacao == "proximo-vencer" ? proximovencerinventarioEle++ : naovencidoinventarioEle++);
     return;
   } else if (ofertaWMS.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoWMS++ : (status == "Em tratamento" ? tratamentoWMS++ : "")
+    status == "Aguardando tratamento" ? aguardandoWMS++ : (status == "Em tratamento" ? tratamentoWMS++ : "");
+    situacao == "vencido" ? vencidowmsfab++ : (situacao == "proximo-vencer" ? proximovencerwmsfab++ : naovencidowmsfab++);
     return;
   } else if (ofertaQlikView.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoQkView++ : (status == "Em tratamento" ? tratamentoQkView++ : "");
+    situacao == "vencido" ? vencidoqlick++ : (situacao == "proximo-vencer" ? proximovencerqlick++ : naovencidoqlick++);
     return;
   } else if (ofertaCamisa10.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoCamisa10++ : (status == "Em tratamento" ? tratamentoCamisa10++ : "");
+    situacao == "vencido" ? vencidocamisa10++ : (situacao == "proximo-vencer" ? proximovencercamisa10++ : naovencidocamisa10++);
     return;
   } else if (ofertaModFabril.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoModFabril++ : (status == "Em tratamento" ? tratamentoModFabril++ : "");
+    situacao == "vencido" ? vencidomofab++ : (situacao == "proximo-vencer" ? proximovencermofab++ : naovencidomofab++);
     return;
   } else if (ofertaInterAct.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoInterAct++ : (status == "Em tratamento" ? tratamentoInterAct++ : "");
+    situacao == "vencido" ? vencidointeract++ : (situacao == "proximo-vencer" ? proximovencerinteract++ : naovencidointeract++);
     return;
   } else if (ofertaPMcycle.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoPMcycle++ : (status == "Em tratamento" ? tratamentoPMcycle++ : "");
+    situacao == "vencido" ? vencidopmcycle++ : (situacao == "proximo-vencer" ? proximovencerpmcycle++ : naovencidopmcycle++);
     return;
   } else if (ofertaSegAmbev.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoSegAmbev++ : (status == "Em tratamento" ? tratamentoSegAmbev++ : "");
+    situacao == "vencido" ? vencidosegamb++ : (situacao == "proximo-vencer" ? proximovencersegamb++ : naovencidosegamb++);
     return;
   } else if (ofertaMES.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoMES++ : (status == "Em tratamento" ? tratamentoMES++ : "")
+    status == "Aguardando tratamento" ? aguardandoMES++ : (status == "Em tratamento" ? tratamentoMES++ : "");
+    situacao == "vencido" ? vencidomesleg++ : (situacao == "proximo-vencer" ? proximovencermesleg++ : naovencidomesleg++);
     return;
   } else if (ofertaNovoMES.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoNovoMES++ : (status == "Em tratamento" ? tratamentoNovoMES++ : "")
+    status == "Aguardando tratamento" ? aguardandoNovoMES++ : (status == "Em tratamento" ? tratamentoNovoMES++ : "");
+    situacao == "vencido" ? vencidonovmes++ : (situacao == "proximo-vencer" ? proximovencernovmes++ : naovencidonovmes++);
     return;
   } else if (ofertaTMS.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoTMS++ : (status == "Em tratamento" ? tratamentoTMS++ : "");
+    situacao == "vencido" ? vencidotms++ : (situacao == "proximo-vencer" ? proximovencertms++ : naovencidotms++);
     return;
   }
   return;

@@ -635,3 +635,151 @@ function montaGraficoStatus(){
 		options: {}
 	});
 }
+function montaGraficoStatusIAL(){
+	var divGrafico = document.getElementById('graficoStatusIAL').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidointeract, naovencidointeract , proximovencerinteract]}	]
+		},
+		options: {}
+	});
+}
+function montaGraficoStatusCamisa10(){
+	var divGrafico = document.getElementById('graficoStatusCamisa10').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidocamisa10, naovencidocamisa10 , proximovencercamisa10]}	]
+		},
+		options: {}
+	});
+}
+function montaGraficoinventarioEle(){
+	var divGrafico = document.getElementById('graficoStatusinventarioEle').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidoinventarioEle, naovencidoinventarioEle , proximovencerinventarioEle]}	]
+		},
+		options: {}
+	});
+}
+function montaGraficowmsfab(){
+	var divGrafico = document.getElementById('graficoStatuswmsfab').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidowmsfab, naovencidowmsfab ,proximovencerwmsfab,]}	]
+		},
+		options: {}
+	});
+}
+function montaGraficoqlick(){
+	var divGrafico = document.getElementById('graficoStatusqlick').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidoqlick , proximovencerqlick , naovencidoqlick]}	]
+		},
+		options: {}
+	});
+}
+
+function montaGraficopm(){
+	var divGrafico = document.getElementById('graficoStatuspmcycle').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidopmcycle , proximovencerpmcycle , naovencidopmcycle]}	]
+		},
+		options: {}
+	});
+}
+function montaGrafimofab(){
+	var divGrafico = document.getElementById('graficoStatusmofab').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidomofab , proximovencermofab , naovencidomofab]}	]
+		},
+		options: {}
+	});
+}
+
+function montaGraficosegamb(){
+	var divGrafico = document.getElementById('graficoStatussegamb').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidosegamb , proximovencersegamb , naovencidosegamb ]}	]
+		},
+		options: {}
+	});
+}
+
+function montaGraficomesleg(){
+	var divGrafico = document.getElementById('graficoStatusmesleg').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidomesleg , proximovencermesleg , naovencidomesleg]}	]
+		},
+		options: {}
+	});
+}
+
+function montaGraficonovmes(){
+	var divGrafico = document.getElementById('graficoStatusnovmes').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidonovmes , proximovencernovmes , naovencidonovmes]}	]
+		},
+		options: {}
+	});
+}
+
+function montaGraficostattms(){
+	var divGrafico = document.getElementById('graficoStatustms').getContext('2d');
+	var graficoStatus = new Chart(divGrafico, {
+		type: 'pie',
+		data: {
+			labels: ["Vencido" , "Não vencido", "Proximo vencer"],
+			datasets: [	{backgroundColor: ['rgba(234, 32, 39,1.0)','rgba(0, 148, 50,1.0)','rgba(244, 238, 66)'],
+					borderColor: ['#fff','#fff','#fff'],
+					data: [vencidotms , proximovencertms , naovencidotms ]}	]
+		},
+		options: {}
+	});
+}
