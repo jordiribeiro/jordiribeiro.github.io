@@ -212,7 +212,7 @@ function descobreOferta(sti, status,situacao) {
     ofertaPMcycle = ["(STI13261)", "(STI14347)", "(STI14348)", "(CENG14346)"],
     ofertaModFabril = ["(STI14049)", "(STI13990)", "(STI13991)", "(STI13993)", "(STI11981)"],
     ofertaInterAct = ["(STI12551)","(STI12549)","(STI12559)","(STI12553)","(STI12540)","(STI12550)","(STI12548)","(STI12546)","(STI12555)","(STI12554)","(STI12552)","(STI16094)","(STI12545)"],
-    ofertaMES = ["(STI1324)", "(STI1519)", "(STI1528)", "(STI1529)", "(STI8106)", "(STI12230)", "(STI1529)"],
+    ofertaMES = ["(STI1324)", "(STI1519)", "(STI1529)", "(STI8106)", "(STI12230)", "(STI14078)","(CENG8749)", "(CENG8756)"],
     ofertaNovoMES = ["(STI12156)", "(STI12150)", "(STI12151)", "(STI12155)", "(STI12153)", "(STI12154)", "(STI12152)", "(STI12164)", "(STI12163)", "(STI12166)", "(STI12165)", "(STI12168)", "(STI12162)", "(STI12167)", "(STI12161)", "(STI12157)", "(STI12159)", "(STI12158)", "(STI12160)", "(STI15330)"],
     ofertaTMS = ["(STI15460)","(STI5579)","(STI5605)","(STI5522)","(STI15458)","(STI15654)","(STI15459)","(STI15461)","(STI12237)","(STI5705)","(STI5731)","(STI5648)","(STI7846)","(STI7847)","(STI15653)","(STI7815)","(STI7816)","(STI15462)","(STI8207)"],
     ofertaSegAmbev = ["(STI11916)", "(STI11917)", "(STI11918)", "(STI11919)", "(STI11920)", "(STI11921)", "(STI11922)", "(STI11923)"];
