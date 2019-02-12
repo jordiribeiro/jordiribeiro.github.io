@@ -36,6 +36,8 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
     timestamp = snapshotDoBanco.timestamp,
     count = snapshotDoBanco.todos.length,
     chamados = [];
+    var urlcid="http://189.36.82.20/atendimento/atendimento/chamado/";
+    var list="/list";
   var chamadosvencidos = [];
   var chamadosTabela = [];
   var tabelaobj = {
@@ -78,7 +80,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
       // tabelaobj.fila=chamadosvencidos.fila;
       // tabelaobj.conclusaoprev=chamadosvencidos.conclusao_prevista;
       // chamadosTabela.push(tabelaobj);
-      txt += "<tr>" + "<td>" + chamadosvencidos.codigo_solicitacao + "</td>" + "<td>" + chamadosvencidos.oferta + "</td>" + "<td>" + chamadosvencidos.fila + "</td>" + "<td>" + chamadosvencidos.conclusao_prevista + "</td>" + "</tr>";
+    txt += "<tr>" + "<td>" +"<a href='http://189.36.82.20/atendimento/atendimento/chamado/"+chamadosvencidos.codigo_solicitacao+"/list'>"+chamadosvencidos.codigo_solicitacao+"</a></td>" + "<td>" + chamadosvencidos.oferta + "</td>" + "<td>" + chamadosvencidos.fila + "</td>" + "<td>" + chamadosvencidos.conclusao_prevista + "</td>" + "</tr>";
 
       localStorage.setItem("arraychamdados", chamadosvencidos);
     }
