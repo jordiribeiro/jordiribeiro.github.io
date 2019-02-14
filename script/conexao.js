@@ -1,12 +1,11 @@
 // Inicia o Firebase
 var config = {
-	apiKey           : "AIzaSyAMA5UgGqHK0vX-g35dihenHR15gNd_6t0",
-	authDomain       : "teste-2307.firebaseapp.com",
-	databaseURL      : "https://teste-2307.firebaseio.com",
-	projectId        : "teste-2307",
-	storageBucket    : "teste-2307.appspot.com",
-	messagingSenderId: "909861439013"
-};
+				apiKey: "AIzaSyAacioXp-5WZM3LPvxaKoKZvs-vNdCQe0M",
+                authDomain: "chamados2-d8f32.appspot.com",
+                databaseURL: "https://chamados2-d8f32.firebaseio.com/",
+                projectId: "chamados2-d8f32",
+                storageBucket: "chamados2-d8f32.appspot.com",
+                messagingSenderId: "90332921535"};
 
 firebase.initializeApp(config);
 var database = firebase.database();

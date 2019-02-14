@@ -1,0 +1,325 @@
+<html>
+
+<head>
+  <script src="./script/jquery.js"></script>
+  <script src="./script/Chart.min.js"></script>
+  <script src="./script/firebase.js"></script>
+
+  <link rel="stylesheet" href="./style/bootstrap.min.css">
+  <link rel="stylesheet" href="./style/style.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="line.js"></script>
+  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
+
+
+  <script type="text/javascript">
+    function chartStepOne() {
+      var currentWindowHeight = $(window).height()
+      var canvas = document.getElementById("myLineChart")
+      var chartHeight = currentWindowHeight - 110
+      var lineChartParent = document.getElementById('linechartparent')
+      canvas.width = lineChartParent.clientWidth;
+      canvas.height = chartHeight;
+      generateLineChart();
+    }
+
+
+    //var cham = JSON.parse(localStorage.getItem("arraychamdados"));
+  </script>
+</head>
+
+<body>
+  <h1 class="text-center d-none">CID - CHAMADOS - GRÁFICOS</h1>
+  <div class="container-fluid bg-white p-3">
+    <div class="row container-fluid">
+      <div class="col-md-3 col-sm-6 col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="chart2">
+        <h5 class="text-center">Todos Chamados - UDI (<span id="totalUDI"></span>)</h5>
+        <canvas id="chamadosBarra"></canvas>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-6   div shadow-lg bg-white rounded text-uppercase" id="inventarioEletronico">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".inventarioEle">Inventário Eletrônico</a></h5>
+        <canvas id="graficoIE"></canvas>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-6   div shadow-lg bg-white rounded text-uppercase" id="WMS">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".wmsfab">WMS</a></h5>
+        <canvas id="graficoWMS"></canvas>
+      </div>
+      <div class="col-md-3 col-sm-6  col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="qlikView">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".qlick">QlikView</a></h5>
+        <canvas id="graficoQlikView"></canvas>
+      </div>
+    </div>
+
+
+
+
+    <div class=" row bg-white p-3 container-fluid">
+      <div class="col-md-3 col-sm-6  col-xs-6 div shadow-lg bg-white rounded text-uppercase " id="Camisa10">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".camisa10">Camisa10</a></h5>
+        <canvas id="graficoCamisa10"></canvas>
+      </div>
+
+
+
+      <div class="col-md-3 col-sm-6 col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="PMCycle">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statuspmcycle">PMCycle</a></h5>
+        <canvas id="graficoPMcycle"></canvas>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="ModFabril">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusmofab">Mod. Fabril</a></h5>
+        <canvas id="graficoModFabril"></canvas>
+      </div>
+      <div class="col-md-3 col-sm-6  col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="InterAct">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".interactionlog">InterAct</a></h5>
+        <canvas id="graficoInterAct"></canvas>
+      </div>
+    </div>
+
+    <div class="row bg-white container-fluid">
+      <div class="col-md-3 col-sm-6 col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="SegAmbev">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statussegamb">SegAmbev</a></h5>
+        <canvas id="graficoSegAmbev"></canvas>
+      </div>
+      <div class="col-md-3 col-sm-6 col-xs-6  div shadow-lg bg-white rounded text-uppercase" id="MES">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".mesleg">MES</a></h5>
+        <canvas id="graficoMES"></canvas>
+      </div>
+
+      <div class="col-md-3 col-sm-6  col-xs-6 div shadow-lg bg-white rounded text-uppercase" id="novoMES">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".novmes">NovoMES</a></h5>
+        <canvas id="graficoNovoMES"></canvas>
+      </div>
+
+      <div class="col-md-3 col-sm-6  col-xs-6 div shadow-lg bg-white rounded text-uppercase" id="TMS">
+        <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">TMS</a></h5>
+        <canvas id="graficoTMS"></canvas>
+      </div>
+    </div>
+    <div class="row container-fluid p-3">
+      <!-- Large modal -->
+      <div class="col-md-1 col-sm-12 col-xs-1"></div>
+      <div class="col-md-4 col-sm-12 col-xs-1">
+        <button type="button" class="btn btn-primary col-xs-5" data-toggle="modal" data-target=".bd-example-modal-lg">Estatisticas Chamados</button>
+
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content row">
+              <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <div class="col-md-12 col-sm-12 div shadow-lg bg-white rounded text-uppercase" id="Status">
+                <h5 class="text-center">Status chamados</h5>
+                <canvas id="graficoStatus" height="200px"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Extra large modal -->
+
+      <button type="button" class="btn btn-primary col-xs-5" data-toggle="modal" data-target=".bd-example-modal-xl">Chamados Perto Vencimento</button>
+
+      <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+
+          <div class="modal-content">
+            <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="tabelaPertoVencer" class="table">
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <div class="modal fade camisa10" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content ">
+        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusCamisa10" height="200px"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade interactionlog" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusIAL" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade inventarioEle" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusinventarioEle" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade wmsfab" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatuswmsfab" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade qlick" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusqlick" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade statuspmcycle" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatuspmcycle" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="modal fade statusmofab" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusmofab" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade statussegamb" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatussegamb" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade mesleg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusmesleg" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade novmes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatusnovmes" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade statustms" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+      <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class=" shadow-lg bg-white rounded text-uppercase" >
+        <canvas id="graficoStatustms" height="200px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+--
+
+
+
+</body>
+  <script src="./script/graficos.js"></script>
+  <script src="./script/main.js"></script>
+  <script src="./script/conexao.js"></script>
+
+  <script>
+    console.log(JSON.parse(localStorage.getItem("arraychamdados")));
+  </script>
+
+</html>
