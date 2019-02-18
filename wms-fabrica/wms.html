@@ -23,12 +23,12 @@
 
 
 
-  <script type="text/javascript">
+  <!-- <script type="text/javascript">
 		var name = "servidordedadoswms2019";
 		$.get('http://dontpad.com/' + name, function(response) {
-		  var htmlObject = $(response); 
+		  var htmlObject = $(response);
 		var mySubString = response.substring(
-			response.lastIndexOf("<textarea id=\"text\">") + 1, 
+			response.lastIndexOf("<textarea id=\"text\">") + 1,
 			response.lastIndexOf("</textarea>")
 		);
 		var json =mySubString.replace("textarea id=\"text\">",'');
@@ -36,18 +36,71 @@
 			var wms=JSON.parse(json);
 			console.log(wms.data);
 		});
-		
+
 		$.post('http://dontpad.com/' + name, function(data) {text:" ";});
 
     //var cham = JSON.parse(localStorage.getItem("arraychamdados"));
+  </script> -->
+
+  <script type="text/javascript">
+  var retorno ;
+  var objTabela;
+
+
+     objTabela="<table class='table'>";
+    objTabela+=" <thead class='thead-dark'><th >Data/Hora Ultima integração </th><th> Tabela </th><th> Itens </th><tr></tr></thead>";
+    $.ajax({
+       url: "https://cors-anywhere.herokuapp.com/" + "http://dontpad.com/servidordedadoswms2019.txt",
+       complete: function(jqXHR, textStatus) {
+
+      },
+      success: function(data) {
+          json = data;
+          retorno=json;
+            //console.log(json);
+
+            var objJSON=JSON.parse(retorno);
+
+            for(x in objJSON){
+              objTabela+="<td>"+objJSON[x].Data+"</td>"+"<td>"+objJSON[x].Parametro+"</td>"+"<td>"+objJSON[x].Valor+"</td></tr>"
+            }
+
+            //console.log(objTabela);
+             objTabela+="</table>";
+        // document.getElementById('json').innerHTML = json;
+        document.getElementById('tabela').innerHTML=objTabela;
+        },
+        error: function(xhr, status, error) {
+            alert('Error')
+        }
+     });
+
+     function atualizarPagina(){
+       location.reload();
+     }
+
   </script>
 </head>
 
-<body id="test">
- 
+<body id="json">
+  <div class="container-fluid">
+    <div class=" container-fluid row p-3">
+      <div   class="col-md-3 col-sm-12 col-xs-4">
+      </div>
+
+      <div  id="tabela" class="table-responsive col-md-12 col-sm-12 col-xs-12 p-3">
+      </div>
+
+    </div>
+    <div class="button">
+      <button type="button" class="btn btn-primary col-xs-5" onclick="atualizarPagina()">Atualizar</button>
+
+    </div>
+  </div>
+
 
 
 </body >
-         
+
 
 </html>
