@@ -91,7 +91,6 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
 
   $("#tabelaPertoVencer").html(txt);
-  $("#hora").html(dataAgora()+" - "+horaAgora());
 
   yMax = Math.ceil(getMaxOfArray([
     aguardandoIE, tratamentoIE,
@@ -203,6 +202,7 @@ async function rederizaOsGraficos(totaisUDI) {
     $('#camisa10status').html(naovencidocamisa10 +"-"+proximovencercamisa10+"-"+vencidocamisa10);
     $('#interactstatus').html(naovencidointeract +" - "+proximovencerinteract+" - "+vencidointeract);
 
+    $("#hora").html(dataAgora()+" - "+horaAgora());
     minQRenderizou = minutoAtual;
   }
 }
