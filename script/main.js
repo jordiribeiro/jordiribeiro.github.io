@@ -49,6 +49,8 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
   proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = 0;
 
+
+
   //  console.log(dataAgora());
 
   todos.forEach(chamado => {
@@ -89,6 +91,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
 
   $("#tabelaPertoVencer").html(txt);
+  $("#hora").html(dataAgora()+" - "+horaAgora());
 
   yMax = Math.ceil(getMaxOfArray([
     aguardandoIE, tratamentoIE,
