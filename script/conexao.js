@@ -1,8 +1,7 @@
 // Inicia o Firebase
-var config = {
-								apiKey: "AIzaSyDFEmrUz1nClQeqUzsjuxtrPWvukz9qkTk",
+var config = {	apiKey: "AIzaSyDFEmrUz1nClQeqUzsjuxtrPWvukz9qkTk",
                 authDomain: "chamados3-577e6.appspot.com",
-                databaseURL: "https://chamados3-577e6.firebaseio.com/",
+                databaseURL: "https://chamados3-577e6.firebaseio.com",
                 projectId: "chamados3-577e6",
                 storageBucket: "chamados3-577e6.appspot.com",
                 messagingSenderId: "337145017330"};
