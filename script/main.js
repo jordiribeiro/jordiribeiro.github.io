@@ -101,7 +101,9 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
   todos.forEach(chamadosvencidos => {
     var tempstat = chamadosvencidos.situacao;
-    if (tempstat == "proximo-vencer") {
+    var tempfila = chamadosvencidos.fila;
+    console.log(chamadosvencidos.fila);
+    if (tempstat == "proximo-vencer" &&  !tempfila.includes("Projetos") ) {
       //  console.log(chamadosTabela[x].numchamado)
       // tabelaobj.numchamado = c;
       // tabelaobj.oferta= chamadosvencidos.oferta;
