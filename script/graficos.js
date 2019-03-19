@@ -162,33 +162,33 @@ function setaOptionsDefault3(){
 // 	});
 // }
 
-
 function todosChamadosBarra(totaisUDI){
-	var chamadosBarra = document.getElementById('chamadosBarra').getContext('2d');
-	var todosChamadosBarra = new Chart(chamadosBarra, {
-	    type: 'bar',
-	    data: {
-			labels: [ totaisUDI[0] + "", totaisUDI[1] + ""],
-			datasets: [
-				{
-					label: textoTratamento,
-					backgroundColor: bgTratamento,
-					borderColor: borderTratamento,
-					fill: false,
-					data: [totaisUDI[0], 0]
-				},
-				{
-					label: textoAguardando,
-					backgroundColor: bgAguarTratamento,
-					borderColor: borderAguarTratamento,
-					fill: false,
-					data: [0 ,totaisUDI[1]]
-				}
-			]
-		},
-	    options: optionsDefault
-	});
-}
+		var chamadosBarra = document.getElementById('chamadosBarra').getContext('2d');
+		var todosChamadosBarra = new Chart(chamadosBarra, {
+			    type: 'bar',
+			    data: {
+						labels: [ totaisUDI[0] + "", totaisUDI[1] + ""],
+						datasets: [
+								{
+										label: textoTratamento,
+										backgroundColor: bgTratamento,
+										borderColor: borderTratamento,
+										fill: false,
+										data: [totaisUDI[0], 0]
+									},
+									{
+											label: textoAguardando,
+											backgroundColor: bgAguarTratamento,
+											borderColor: borderAguarTratamento,
+											fill: false,
+											data: [0 ,totaisUDI[1]]
+										}
+									]
+								},
+							    options: optionsDefault
+							});
+						}
+
 
 // function todosChamadosLine(totaisUDI){
 // 	var chamadosLine = document.getElementById('chamadosLine').getContext('2d');
@@ -782,4 +782,27 @@ function montaGraficostattms(){
 		},
 		options: {}
 	});
+}
+function montarGraficoSegundaTela(){
+
+	var outrosOutrosSis=proximovencercamisa10+proximovencerpmcycle+proximovencermofab+proximovencersegamb;
+	var tempMES=proximovencermesleg+proximovencernovmes;
+	var divGrafico = document.getElementById('graficoTela2');
+	var graficoStatus = new Chart(divGrafico, {
+	type: 'horizontalBar',
+    data: {
+      labels: ["MES","TMS","Inventario Ele.","QLICK","IAL","WMS Fabrica","Outros Sistemas"],
+      datasets:[{
+          label: "Quantidade Chamados",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [tempMES,proximovencertms,proximovencerinventarioEle,proximovencerqlick,proximovencerinteract,proximovencerwmsfab,outrosOutrosSis]  }]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Chamados Perto de vencimento'
+      }
+    }
+});
 }
