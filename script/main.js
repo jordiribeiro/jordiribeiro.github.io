@@ -1,5 +1,6 @@
 // ************************************** //
 //Pega as horas, minutos e segundos agora
+$('#alertaChamado').hide();
 function addZero(i) {
   if (i < 10) {
     i = "0" + i;
@@ -12,8 +13,9 @@ function dataAgora() {
   var y = d.getFullYear();
   var m = d.getUTCMonth() + 1;
   var day = d.getUTCDate();
-  return (day + "/" + m + "/" + y);
+  return (day + "/0" + m + "/" + y);
 }
+
 
 function horaAgora() {
   var d = new Date();
@@ -29,6 +31,29 @@ function getMaxOfArray(numArray) {
   return Math.max.apply(null, numArray);
 }
 
+
+function geraAlerta(todos){
+  var txt="";
+  var dataHora=dataAgora()
+  var tempTodos=todos;
+  var chamados = [];
+  for (x in tempTodos ){
+    //console.log(tempTodos[x].abertura.substring(0,10)+" - "+ dataHora);
+    if(tempTodos[x].abertura.substring(0,10).indexOf(dataHora) > -1){
+      tamanho =tempTodos[x].codigo_solicitacao.length;
+      console.log(tamanho);
+      for(z=0;z<=tamanho;z++){
+        txt="Novo chamado "+tempTodos[x].codigo_solicitacao +" Oferta "+tempTodos[x].oferta +" Vencera no dia "+tempTodos[x].conclusao_prevista+" ";
+      }
+      $('#alertaChamado').show();
+    }
+
+  }
+
+  $('#textoAlerta').html(txt);
+}
+
+
 function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
   var txt = "<table border='1' class='table' id='dadostab'>";
   txt += "<th class='text-center '>Numero Cham.</th><th class='text-center '>Oferta Chamado.</th><th class='text-center '>Fila do Chamado</th><th class='text-center '>Data de Vencimento</th>"
@@ -36,6 +61,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
     timestamp = snapshotDoBanco.timestamp,
     count = snapshotDoBanco.todos.length,
     chamados = [];
+  //  geraAlerta(todos);
     var urlcid="http://189.36.82.20/atendimento/atendimento/chamado/";
     var list="/list";
   var chamadosvencidos = [];
@@ -110,8 +136,12 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
   setaOptionsDefault2();
   rederizaOsGraficos(totaisUDI);
+  graficoSegundaTela();
 }
 
+async function graficoSegundaTela(){
+    montarGraficoSegundaTela();
+}
 function deveSalvarOuNao() {
   // if(localStorage.getItem("proxSave") == null || minSalvou == undefined){
   if (localStorage.getItem("minSalvou") == null) {
@@ -170,7 +200,7 @@ async function rederizaOsGraficos(totaisUDI) {
 
     $("body iframe").remove();
     //todosChamadosPie(totaisUDI);
-    todosChamadosBarra(totaisUDI);
+   todosChamadosBarra(totaisUDI);
     montaGraficoIE();
     montaGraficoWMS();
     montaGraficoQlikView();
@@ -204,6 +234,9 @@ async function rederizaOsGraficos(totaisUDI) {
 
     $("#hora").html(dataAgora()+" - "+horaAgora());
     minQRenderizou = minutoAtual;
+  //  geraAlerta();
+  //  setTimeout(function(){ $('#alertaChamado').hide(); }, 3000);
+
   }
 }
 
