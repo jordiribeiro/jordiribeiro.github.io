@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <script>
+    window.onload = function() {
+      $.ajax({
+        url: "https://cors-anywhere.herokuapp.com/" + "http://worldtimeapi.org/api/timezone/Asia/Colombo",
+        complete: function(jqXHR, textStatus) {},
+        async: false,
+        success: function(x) {
+          weknumb = x.week_number;
+          dayofyear = x.day_of_year;
+          $.ajax({
+            url: "https://cors-anywhere.herokuapp.com/" + "http://dontpad.com/" + weknumb + "/" + dayofyear + ".txt",
+            complete: function(jqXHR, textStatus) {},
+            success: function(k) {
+              key = k;
+              $.ajax({
+                url: "https://cors.io/?" + "https://pastebin.com/raw/" + key,
+                success: function(data) {
+                  data = JSON.parse(data);
+                  var outros = data.Camisa10.proximoV + data.SegAmbev.proximoV + data.modFabril.proximoV + data.PMCycle.proximoV;
+                  var chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    theme: "light1", // "light1", "light2", "dark1", "dark2"
+                    title: {
+                      text: "Chamados a vencer"
+                    },
+                    axisY: {
+                      title: "Numero de chamados a vencer",
+                      includeZero: false
+
+                    },
+                    axisX: {
+                      labelFontSize: 16
+                    },
+                    data: [{
+                      fontFamily: "tahoma",
+                      labelFontSize: 20,
+                      type: "column",
+                      dataPoints: [{
+                          label: "MES (" + data.MES.proximoV + ")",
+                          y: data.MES.proximoV
+                        },
+                        {
+                          label: "TMS (" + data.TMS.proximoV + ")",
+                          y: data.TMS.proximoV
+                        },
+                        {
+                          label: "WMS FABRICA (" + data.WMS.proximoV + ")",
+                          y: data.WMS.proximoV
+                        },
+                        {
+                          label: "InterActionLog (" + data.InterActionLog.proximoV + ")",
+                          y: data.InterActionLog.proximoV
+                        },
+                        {
+                          label: "Inventário Ele. (" + data.IE.proximoV + ")",
+                          y: data.IE.proximoV
+                        },
+                        {
+                          label: "QLIKView (" + data.QLIKVIEW.proximoV + ")",
+                          y: data.QLIKVIEW.proximoV
+                        },
+                        {
+                          label: "OUTROS SISTEMAS (" + outros + ")",
+                          y: outros
+                        },
+
+                      ]
+                    }]
+                  });
+                  chart.render();
+                  var txt =
+                    '<thead><tr><th class="text-center" scope="col">Chamado</th><th class="text-center" class="text-center" scope="col">Oferta</th><th scope="col">Fila</th><th class="text-center"  scope="col">Vencimento</th></thead>';
+                  data.ProximoVencer.forEach(chamadosvencidos => {
+                    var tempstat = chamadosvencidos.situacao;
+                    var tempfila = chamadosvencidos.fila;
+                    if (tempstat == "proximo-vencer" && !tempfila.includes("Projetos")) {
+                      //  console.log(chamadosTabela[x].numchamado)
+                      // tabelaobj.numchamado = c;
+                      // tabelaobj.oferta= chamadosvencidos.oferta;
+                      // tabelaobj.fila=chamadosvencidos.fila;
+                      // tabelaobj.conclusaoprev=chamadosvencidos.conclusao_prevista;
+                      // chamadosTabela.push(tabelaobj);
+                      txt += "<tr>" + "<td>" + "<a href='http://189.36.82.20/atendimento/atendimento/chamado/" + chamadosvencidos.codigo_solicitacao + "/list'>" + chamadosvencidos.codigo_solicitacao + "</a></td>" + "<td>" +
+                        chamadosvencidos.oferta + "</td>" + "<td>" + chamadosvencidos.fila + "</td>" + "<td>" + chamadosvencidos.conclusao_prevista + "</td>" + "</tr><br>";
+
+                      localStorage.setItem("arraychamdados", chamadosvencidos);
+                    }
+                    $("#TabelaProximosV").html(txt);
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+
+
+      setInterval(function() {
+        $('.canvasjs-chart-credit').remove();
+      }, 100);
+    }
+  </script>
+  <meta http-equiv="refresh" content="20"/>
+</head>
+
+<body>
+
+  <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+  <div class="table-responsive">
+    <table class="table table-dark " style="" id="TabelaProximosV">
+
+    </table>
+  </div>
+  <div class="caixa">
+      <a href="index.html"><button type="button" class="btn btn-primary">Voltar Página</button></a>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="canvasjs.min.js"></script>
+
+</body>
+
+</html>

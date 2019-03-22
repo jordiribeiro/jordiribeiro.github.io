@@ -1,0 +1,141 @@
+.caixa{
+  margin-left: 80%;
+}
+.divP{
+  margin-top: 5%;
+}
+.Charts {
+  margin: 10px auto;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding: 50px;
+}
+#charts{
+  user-select: none;
+}
+.Charts.horizontal {
+  display: block;
+}
+.Charts.horizontal .Charts--serie {
+  display: block;
+  margin: 0 0 30px 0;
+  border: 0;
+}
+.Charts.horizontal .Charts--serie label {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: 0;
+  bottom: auto;
+  padding: 0 0 10px 0;
+}
+.Charts--serie {
+  height: 100%;
+  margin: 0 30px 0 10px;
+  display: inline-block;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  -webkit-transform-origin: 0 100%;
+          transform-origin: 0 100%;
+  -webkit-animation: slideUp 0.6s;
+          animation: slideUp 0.6s;
+  position: relative;
+  border-bottom: 1px solid #c2c2c2;
+}
+.Charts--serie.stacked {
+  display: block;
+}
+.Charts--serie label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -50px;
+  font-family: Helvetica, sans-serif;
+  font-size: 30px;
+  text-align: center;
+  color: #808080;
+}
+.Charts.horizontal .Charts--item {
+  display: block;
+  border-radius: 0 2px 2px 0;
+  margin: 0 0 5px 0;
+  height: 1em;
+}
+.Charts.horizontal .Charts--item b {
+  position: absolute;
+  right: -20px;
+  top: 0.3em;
+}
+.Charts--item {
+  background-color: #43A19E;
+  display: inline-block;
+  margin: 0 5px 0 0;
+  flex: 1;
+  transition: height 1s ease-out, width 1s ease-out;
+  position: relative;
+  text-align: center;
+  width: 50px;
+  border-radius: 2px 2px 0 0;
+}
+.Charts--item.layered {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: 0;
+  margin: 0;
+}
+.Charts--item.layered b {
+  position: absolute;
+  right: 0;
+}
+.Charts--item.stacked {
+  position: relative;
+  display: block;
+  border-radius: 0;
+}
+.Charts--item b {
+  position: relative;
+  font-family: Helvetica, sans-serif;
+  font-size: 30px;
+  top: -50px;
+  color: #43A19E;
+}
+.Legend{
+  margin:0px 0px 0px 5%;
+}
+.Legend--color {
+  display: inline-block;
+  border-radius: 2px;
+  width: 16px;
+  height: 16px;
+}
+.Legend--label {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: Helvetica, sans-serif;
+  font-size: 20px;
+  margin: 0 0 0 5px;
+}
+@-webkit-keyframes slideUp {
+  from {
+    -webkit-transform: scaleY(0);
+            transform: scaleY(0);
+  }
+  to {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+}
+@keyframes slideUp {
+  from {
+    -webkit-transform: scaleY(0);
+            transform: scaleY(0);
+  }
+  to {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+}
