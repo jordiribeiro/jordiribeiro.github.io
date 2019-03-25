@@ -17,7 +17,7 @@
             success: function(k) {
               key = k;
               $.ajax({
-                url: "https://cors.io/?" + "https://pastebin.com/raw/" + key,
+                url: "https://cors.io/?" + "https://scrape.pastebin.com/api_scrape_item.php?i=" + key,
                 success: function(data) {
                   data = JSON.parse(data);
                   var outros = data.Camisa10.proximoV + data.SegAmbev.proximoV + data.modFabril.proximoV + data.PMCycle.proximoV;
