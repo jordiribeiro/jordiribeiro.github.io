@@ -81,17 +81,18 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
 
   todos.forEach(chamado => {
     var status = chamado.status;
+    var filaChamado = chamado.fila;
     status == "Aguardando tratamento" ? aguardando++ : (status == "Em tratamento" ? tratamento++ : outros++);
 
     var oferta = chamado.oferta,
       sti = oferta.substr(oferta.indexOf("(STI"));
-    descobreOferta(sti, chamado.status,chamado.situacao);
+    descobreOferta(sti, chamado.status,chamado.situacao,chamado.fila);
   });
 
   todos.forEach(chamado => {
     var oferta = chamado.oferta,
       ceng = oferta.substr(oferta.indexOf("(CENG"));
-    descobreOferta(ceng, chamado.status,chamado.situacao);
+    descobreOferta(ceng, chamado.status,chamado.situacao,chamado.fila);
   });
 
   todos.forEach(chamadosvencidos => {
@@ -242,7 +243,7 @@ async function rederizaOsGraficos(totaisUDI) {
   }
 }
 
-function descobreOferta(sti, status,situacao) {
+function descobreOferta(sti, status,situacao,filaChamado) {
   var ofertaInvetarioEletronico = ["(STI15973)", "(STI15974)", "(STI15975)", "(STI15976)", "(STI15977)", "(STI15978)", "(STI15979)", "(STI15980)", "(STI4591)", "(STI4673)"],
     ofertaWMS = ["(STI8053)", "(STI8057)", "(STI8058)", "(STI8061)", "(STI8062)", "(STI8063)", "(STI8066)", "(STI8067)", "(STI8071)", "(STI8072)", "(STI8073)", "(STI8075)", "(STI9649)", "(STI9651)", "(STI9652)", "(STI10250)", "(STI10251)", "(STI10252)", "(STI10259)", "(STI11868)", "(STI12173)", "(STI12788)", "(STI12789)", "(STI13220)", "(STI13221)", "(STI13222)", "(STI13223)", "(STI8076)", "(STI8077)", "(STI8078)", "(STI8079)", "(STI8211)", "(STI9637)", "(STI9640)", "(STI9641)", "(STI9642)", "(STI9643)", "(STI9645)", "(STI9647)", "(STI9648)", "(STI12177)", "(STI12181)", "(STI13218)", "(STI13219)", "(STI12779)", "(STI12780)", "(STI12781)", "(STI12782)", "(STI12783)", "(STI12784)", "(STI12785)", "(STI12786)", "(STI12787)", "(STI10137)"];
   ofertaQlikView = ["(STI11854)", "(STI11855)", "(STI11856)", "(STI11857)", "(STI11858)"]
@@ -290,11 +291,11 @@ function descobreOferta(sti, status,situacao) {
     situacao == "vencido" ? vencidosegamb++ : (situacao == "proximo-vencer" ? proximovencersegamb++ : naovencidosegamb++);
     return;
   } else if (ofertaMES.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoMES++ : (status == "Em tratamento" ? tratamentoMES++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoMES++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoMES++ : "");
     situacao == "vencido" ? vencidomesleg++ : (situacao == "proximo-vencer" ? proximovencermesleg++ : naovencidomesleg++);
     return;
   } else if (ofertaNovoMES.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoNovoMES++ : (status == "Em tratamento" ? tratamentoNovoMES++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoNovoMES++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoNovoMES++ : "");
     situacao == "vencido" ? vencidonovmes++ : (situacao == "proximo-vencer" ? proximovencernovmes++ : naovencidonovmes++);
     return;
   } else if (ofertaTMS.indexOf(sti) > -1) {
