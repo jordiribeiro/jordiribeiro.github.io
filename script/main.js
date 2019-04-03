@@ -267,7 +267,7 @@ function descobreOferta(sti, status,situacao,filaChamado) {
     situacao == "vencido" ? vencidowmsfab++ : (situacao == "proximo-vencer" ? proximovencerwmsfab++ : naovencidowmsfab++);
     return;
   } else if (ofertaQlikView.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoQkView++ : (status == "Em tratamento" ? tratamentoQkView++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoQkView++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoQkView++ : "");
     situacao == "vencido" ? vencidoqlick++ : (situacao == "proximo-vencer" ? proximovencerqlick++ : naovencidoqlick++);
     return;
   } else if (ofertaCamisa10.indexOf(sti) > -1) {
