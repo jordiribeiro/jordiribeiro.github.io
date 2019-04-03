@@ -269,6 +269,7 @@ function descobreOferta(sti, status,situacao,filaChamado) {
   } else if (ofertaQlikView.indexOf(sti) > -1) {
     status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoQkView++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoQkView++ : "");
     situacao == "vencido" ? vencidoqlick++ : (situacao == "proximo-vencer" ? proximovencerqlick++ : naovencidoqlick++);
+	  console.log(filaChamado)
     return;
   } else if (ofertaCamisa10.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoCamisa10++ : (status == "Em tratamento" ? tratamentoCamisa10++ : "");
