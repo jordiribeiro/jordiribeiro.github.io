@@ -473,7 +473,7 @@ function montaGraficoInterAct(){
 	var graficoInterAct = new Chart(divGraficoInterAct, {
 	    type: 'bar',
 	    data: {
-			labels: [ tratamentoInterAct + "", 90 + "" ],
+			labels: [ tratamentoInterAct + "", aguardandoInterAct + "" ],
 			datasets: [
 				{
 					label: textoTratamento,
@@ -485,7 +485,7 @@ function montaGraficoInterAct(){
 					label: textoAguardando,
 					backgroundColor: bgAguarTratamento,
 					borderColor: borderAguarTratamento,
-					data: [0, 90]
+					data: [0, aguardandoInterAct]
 				}
 			]
 		},
