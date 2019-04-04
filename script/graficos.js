@@ -484,7 +484,7 @@ function montaGraficoInterAct(){
 					label: textoAguardando,
 					backgroundColor: bgAguarTratamento,
 					borderColor: borderAguarTratamento,
-					data: [0, aguardandoInterAct]
+					data: [0, 90]
 				}
 			]
 		},
