@@ -468,6 +468,7 @@ function montaGraficoModFabril(){
 }
 
 function montaGraficoInterAct(){
+	aguardandoInterAct=90;
 	var divGraficoInterAct = document.getElementById('graficoInterAct').getContext('2d');
 	var graficoInterAct = new Chart(divGraficoInterAct, {
 	    type: 'bar',
@@ -484,7 +485,7 @@ function montaGraficoInterAct(){
 					label: textoAguardando,
 					backgroundColor: bgAguarTratamento,
 					borderColor: borderAguarTratamento,
-					data: [0, 90]
+					data: [0, aguardandoInterAct]
 				}
 			]
 		},
