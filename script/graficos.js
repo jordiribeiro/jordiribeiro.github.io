@@ -468,7 +468,7 @@ function montaGraficoModFabril(){
 }
 
 function montaGraficoInterAct(){
-	
+
 	var divGraficoInterAct = document.getElementById('graficoInterAct').getContext('2d');
 	var graficoInterAct = new Chart(divGraficoInterAct, {
 	    type: 'bar',
@@ -586,6 +586,54 @@ function montaGraficoTMS(){
 					backgroundColor: bgAguarTratamento,
 					borderColor: borderAguarTratamento,
 					data: [0, aguardandoTMS]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}
+function montaGrafico3C(){
+	var divGrafico = document.getElementById('grafico3C').getContext('2d');
+	var graficoTMS = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [tratamento3C + "" , aguardando3C + ""],
+			datasets: [
+				{
+					label: textoTratamento,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [tratamento3C, 0]
+				},
+				{
+					label: textoAguardando,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [0, aguardando3C]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}
+function montaGraficoEC(){
+	var divGrafico = document.getElementById('graficoEasy').getContext('2d');
+	var graficoTMS = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [tratamentoEasyComex + "" , aguardandoEasyComex + ""],
+			datasets: [
+				{
+					label: textoTratamento,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [tratamentoEasyComex, 0]
+				},
+				{
+					label: textoAguardando,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [0, aguardandoEasyComex]
 				}
 			]
 		},
