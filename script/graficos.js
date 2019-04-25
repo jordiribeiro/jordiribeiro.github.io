@@ -640,6 +640,32 @@ function montaGraficoEC(){
 	    options: optionsDefault2
 	});
 }
+
+function montaGraficoPR(){
+	var divGrafico = document.getElementById('graficoPR').getContext('2d');
+	var graficoTMS = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [tratamentoPR + "" , aguardandoPR + ""],
+			datasets: [
+				{
+					label: textoTratamento,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [tratamentoPR, 0]
+				},
+				{
+					label: textoAguardando,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [0, aguardandoPR]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}
+
 /*function montaGraficoStatus(){
 	var divGrafico = document.getElementById('graficoStatus').getContext('2d');
 	var graficoStatus = new Chart(divGrafico, {

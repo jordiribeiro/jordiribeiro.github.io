@@ -1,5 +1,6 @@
 // ************************************** //
 //Pega as horas, minutos e segundos agora
+var tmparrchamado = [];
 $('#alertaChamado').hide();
 function addZero(i) {
   if (i < 10) {
@@ -41,7 +42,7 @@ function geraAlerta(todos){
     //console.log(tempTodos[x].abertura.substring(0,10)+" - "+ dataHora);
     if(tempTodos[x].abertura.substring(0,10).indexOf(dataHora) > -1){
       tamanho =tempTodos[x].codigo_solicitacao.length;
-      console.log(tamanho);
+      //console.log(tamanho);
       for(z=0;z<=tamanho;z++){
         txt="Novo chamado "+tempTodos[x].codigo_solicitacao +" Oferta "+tempTodos[x].oferta +" Vencera no dia "+tempTodos[x].conclusao_prevista+" ";
       }
@@ -73,7 +74,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
     conclusaoprev: ""
   };
 
-  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = aguardando3C = tratamento3C = vencido3C = pertovencimento3C = naovencido3C = aguardandoEasyComex = tratamentoEasyComex = vencidoEasyComex = pertovencimentoEasyComex = naovencidoEasyComex= 0;
+  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = aguardando3C = tratamento3C = vencido3C = pertovencimento3C = naovencido3C = aguardandoEasyComex = tratamentoEasyComex = vencidoEasyComex = pertovencimentoEasyComex = naovencidoEasyComex = aguardandoPR = tratamentoPR = vencidoPR = pertovencimentoPR = naovencidoPR =  0;
 
 
 
@@ -103,7 +104,7 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
   todos.forEach(chamadosvencidos => {
     var tempstat = chamadosvencidos.situacao;
     var tempfila = chamadosvencidos.fila;
-    console.log(chamadosvencidos.fila);
+//    console.log(chamadosvencidos.fila);
     if (tempstat == "proximo-vencer" &&  !tempfila.includes("Projetos") ) {
       //  console.log(chamadosTabela[x].numchamado)
       // tabelaobj.numchamado = c;
@@ -230,6 +231,7 @@ async function rederizaOsGraficos(totaisUDI) {
    montaGraficostattms();
    montaGrafico3C();
    montaGraficoEC();
+   montaGraficoPR();
     //montaChamadosBarraSeparados(totaisUDI);
 
 
@@ -245,7 +247,7 @@ async function rederizaOsGraficos(totaisUDI) {
   }
 }
 
-function descobreOferta(sti, status,situacao,filaChamado) {
+function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
   var ofertaInvetarioEletronico = ["(STI15973)", "(STI15974)", "(STI15975)", "(STI15976)", "(STI15977)", "(STI15978)", "(STI15979)", "(STI15980)", "(STI4591)", "(STI4673)"],
     ofertaWMS = ["(STI8053)", "(STI8057)", "(STI8058)", "(STI8061)", "(STI8062)", "(STI8063)", "(STI8066)", "(STI8067)", "(STI8071)", "(STI8072)", "(STI8073)", "(STI8075)", "(STI9649)", "(STI9651)", "(STI9652)", "(STI10250)", "(STI10251)", "(STI10252)", "(STI10259)", "(STI11868)", "(STI12173)", "(STI12788)", "(STI12789)", "(STI13220)", "(STI13221)", "(STI13222)", "(STI13223)", "(STI8076)", "(STI8077)", "(STI8078)", "(STI8079)", "(STI8211)", "(STI9637)", "(STI9640)", "(STI9641)", "(STI9642)", "(STI9643)", "(STI9645)", "(STI9647)", "(STI9648)", "(STI12177)", "(STI12181)", "(STI13218)", "(STI13219)", "(STI12779)", "(STI12780)", "(STI12781)", "(STI12782)", "(STI12783)", "(STI12784)", "(STI12785)", "(STI12786)", "(STI12787)", "(STI10137)"];
   ofertaQlikView = ["(STI11854)", "(STI11855)", "(STI11856)", "(STI11857)", "(STI11858)"]
@@ -259,6 +261,7 @@ function descobreOferta(sti, status,situacao,filaChamado) {
 "(STI15330)","(CENG8756)","(STI8106)","(STI1703)","(STI14078)"],
   oferta3C = ["(STI14426)","(STI8105)","(STI10725)","(STI10709)"],
   ofertaEC = ["(STI10684)","(STI2592)","(STI2520)","(STI2591)"],
+  ofertaPR = ["(STI15238)","(STI15239)","(STI15240)","(STI15241)","(STI15245)","(STI15242)"]
     ofertaTMS = ["(STI15460)","(STI5579)","(STI5605)","(STI5522)","(STI15458)","(STI15654)","(STI15459)","(STI15461)","(STI12237)","(STI5705)","(STI5731)","(STI5648)","(STI7846)","(STI7847)","(STI15653)","(STI7815)","(STI7816)","(STI15462)","(STI8207)"],
     ofertaSegAmbev = ["(STI11916)", "(STI11917)", "(STI11918)", "(STI11919)", "(STI11920)", "(STI11921)", "(STI11922)", "(STI11923)"];
 
@@ -273,7 +276,7 @@ function descobreOferta(sti, status,situacao,filaChamado) {
   } else if (ofertaQlikView.indexOf(sti) > -1) {
     status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoQkView++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoQkView++ : "");
     situacao == "vencido" ? vencidoqlick++ : (situacao == "proximo-vencer" ? proximovencerqlick++ : naovencidoqlick++);
-	  console.log(filaChamado)
+	  //console.log(filaChamado)
     return;
   } else if (ofertaCamisa10.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoCamisa10++ : (status == "Em tratamento" ? tratamentoCamisa10++ : "");
@@ -311,8 +314,11 @@ function descobreOferta(sti, status,situacao,filaChamado) {
     status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoEasyComex++ : (status == "Em tratamento"  ? tratamentoEasyComex++ : "");
     situacao == "vencido" ? vencidoEasyComex++ : (situacao == "proximo-vencer" ? pertovencimentoEasyComex++ : naovencidoEasyComex++);
     return;
-  }
-   else if (ofertaTMS.indexOf(sti) > -1) {
+  }else if (ofertaEC.indexOf(sti) > -1) {
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoPR++ : (status == "Em tratamento"  ? tratamentoPR++ : "");
+    situacao == "vencido" ? vencidoPR++ : (situacao == "proximo-vencer" ? pertovencimentoPR++ : naovencidoPR++);
+    return;
+  }else if (ofertaTMS.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoTMS++ : (status == "Em tratamento" ? tratamentoTMS++ : "");
     situacao == "vencido" ? vencidotms++ : (situacao == "proximo-vencer" ? proximovencertms++ : naovencidotms++);
     return;
@@ -322,8 +328,8 @@ function descobreOferta(sti, status,situacao,filaChamado) {
 
 
 function calculaTotalChamadosUdi() {
-  var totalTratamentoUdi = tratamentoIE + tratamentoWMS + tratamentoQkView + tratamentoCamisa10 + tratamentoModFabril + tratamentoInterAct + tratamentoSegAmbev + tratamentoPMcycle + tratamentoMES + tratamentoNovoMES + tratamentoTMS;
-  var totalAguardandoUDI = aguardandoIE + aguardandoWMS + aguardandoQkView + aguardandoCamisa10 + aguardandoModFabril + aguardandoInterAct + aguardandoSegAmbev + aguardandoPMcycle + aguardandoMES + aguardandoNovoMES + aguardandoTMS;
+  var totalTratamentoUdi = tratamentoIE + tratamentoWMS + tratamentoQkView + tratamentoCamisa10 + tratamentoModFabril + tratamentoInterAct + tratamentoSegAmbev + tratamentoPMcycle + tratamentoMES + tratamentoNovoMES + tratamentoTMS + tratamento3C + tratamentoPR+ tratamentoEasyComex;
+  var totalAguardandoUDI = aguardandoIE + aguardandoWMS + aguardandoQkView + aguardandoCamisa10 + aguardandoModFabril + aguardandoInterAct + aguardandoSegAmbev + aguardandoPMcycle + aguardandoMES + aguardandoNovoMES + aguardandoTMS + aguardando3C + aguardandoPR + aguardandoEasyComex;
 
   return [totalTratamentoUdi, totalAguardandoUDI];
 }
