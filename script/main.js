@@ -56,7 +56,7 @@ function geraAlerta(todos){
 
 
 function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
-  var txt = "<table border='1' class='table' id='dadostab'>";
+  var txt = "<table border='1' class='table border  rounded ' id='dadostab'>";
   txt += "<th class='text-center '>Numero Cham.</th><th class='text-center '>Oferta Chamado.</th><th class='text-center '>Fila do Chamado</th><th class='text-center '>Data de Vencimento</th>"
   var todos = snapshotDoBanco.todos,
     timestamp = snapshotDoBanco.timestamp,
@@ -217,21 +217,21 @@ async function rederizaOsGraficos(totaisUDI) {
     montaGraficoMES();
     montaGraficoNovoMES();
     montaGraficoTMS();
-    montaGraficoStatus();
-    montaGraficoStatusIAL();
-    montaGraficoStatusCamisa10();
-    montaGraficoinventarioEle();
-    montaGraficowmsfab();
-    montaGraficoqlick();
-   montaGraficopm();
-   montaGrafimofab();
-   montaGraficosegamb();
-   montaGraficomesleg();
-   montaGraficonovmes();
-   montaGraficostattms();
-   montaGrafico3C();
-   montaGraficoEC();
-   montaGraficoPR();
+    montaGrafico3C();
+    montaGraficoEC();
+    montaGraficoPR();
+  //  montaGraficoStatus();
+    //montaGraficoStatusIAL();
+  //  montaGraficoStatusCamisa10();
+  //  montaGraficoinventarioEle();
+  //  montaGraficowmsfab();
+  //  montaGraficoqlick();
+  // montaGraficopm();
+  // montaGrafimofab();
+  // montaGraficosegamb();
+  // montaGraficomesleg();
+  // montaGraficonovmes();
+  // montaGraficostattms();
     //montaChamadosBarraSeparados(totaisUDI);
 
 
