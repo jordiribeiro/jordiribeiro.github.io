@@ -75,8 +75,8 @@
     <div class="tab-content  row " id="myTabContent" >
 
       <div class="tab-pane fade show active row mt-2 col-md-12 col-sm-12   " id="logistica" role="tabpanel" aria-labelledby="home-tab">
-        <div class="col-md-4 col-sm-12  float-left " >
-          <div class=" div shadow-lg bg-white rounded text-uppercase" id="chart2">
+        <div class="col-md-4 col-sm-12  float-left " style="height:3000px">
+          <div class=" div shadow-lg bg-white rounded text-uppercase" id="chart2" >
             <h5 class="text-center">Todos Chamados - UDI (<span id="totalUDI"></span>)</h5>
             <canvas id="chamadosBarra"></canvas>
           </div>
@@ -106,6 +106,10 @@
             <canvas id="graficoTMS"></canvas>
           </div>
 
+          <div class=" col-md-5 col-sm-12 col-xs-6  p-2 m-2 shadow-lg bg-white rounded text-uppercase" id="TMS">
+            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">PPMS</a></h5>
+            <canvas id="graficoPPMS"></canvas>
+          </div>
         </div>
 
       </div>

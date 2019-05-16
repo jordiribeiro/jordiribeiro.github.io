@@ -592,6 +592,33 @@ function montaGraficoTMS(){
 	    options: optionsDefault2
 	});
 }
+
+
+function montaGraficoPPMS(){
+	var divGrafico = document.getElementById('graficoPPMS').getContext('2d');
+	var graficoTMS = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [tratamentoPPMS + "" , aguardandoPPMS + ""],
+			datasets: [
+				{
+					label: textoTratamento,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [tratamentoPPMS, 0]
+				},
+				{
+					label: textoAguardando,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [0, aguardandoPPMS]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}
+
 function montaGrafico3C(){
 	var divGrafico = document.getElementById('grafico3C').getContext('2d');
 	var graficoTMS = new Chart(divGrafico, {

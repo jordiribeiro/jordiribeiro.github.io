@@ -74,7 +74,8 @@ function atualizaInformacoesNaTelaUDI(snapshotDoBanco) {
     conclusaoprev: ""
   };
 
-  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = aguardando3C = tratamento3C = vencido3C = pertovencimento3C = naovencido3C = aguardandoEasyComex = tratamentoEasyComex = vencidoEasyComex = pertovencimentoEasyComex = naovencidoEasyComex = aguardandoPR = tratamentoPR = vencidoPR = pertovencimentoPR = naovencidoPR =  0;
+  proximovencer = naovencido = vencido = aguardando = tratamento = outros = aguardandoIE = tratamentoIE = aguardandoWMS = tratamentoWMS = aguardandoQkView = tratamentoQkView = aguardandoCamisa10 = tratamentoCamisa10 = aguardandoModFabril = tratamentoModFabril = aguardandoInterAct = tratamentoInterAct = aguardandoPMcycle = tratamentoPMcycle = aguardandoSegAmbev = tratamentoSegAmbev = aguardandoMES = tratamentoMES = aguardandoNovoMES = tratamentoNovoMES = aguardandoTMS = tratamentoTMS = vencidocamisa10 = naovencidocamisa10 = proximovencercamisa10 = vencidointeract = naovencidointeract = proximovencerinteract = vencidoinventarioEle = naovencidoinventarioEle = proximovencerinventarioEle = vencidowmsfab = naovencidowmsfab = proximovencerwmsfab = vencidoqlick = naovencidoqlick = proximovencerqlick = vencidopmcycle = naovencidopmcycle = proximovencerpmcycle = vencidomofab = naovencidomofab = proximovencermofab = vencidosegamb = naovencidosegamb = proximovencersegamb = vencidomesleg = naovencidomesleg = proximovencermesleg = vencidonovmes = naovencidonovmes = proximovencernovmes = vencidotms = naovencidotms = proximovencertms = aguardando3C = tratamento3C = vencido3C = pertovencimento3C = naovencido3C = aguardandoEasyComex = tratamentoEasyComex = vencidoEasyComex = pertovencimentoEasyComex = naovencidoEasyComex = aguardandoPR = tratamentoPR = vencidoPR = pertovencimentoPR = naovencidoPR = aguardandoPPMS = tratamentoPPMS = naovencidoPPMS =
+  proximovencerPPMS = vencidoPPMS = 0;
 
 
 
@@ -217,6 +218,7 @@ async function rederizaOsGraficos(totaisUDI) {
     montaGraficoMES();
     montaGraficoNovoMES();
     montaGraficoTMS();
+    montaGraficoPPMS();
     montaGrafico3C();
     montaGraficoEC();
     montaGraficoPR();
@@ -261,6 +263,7 @@ function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
 "(STI15330)","(CENG8756)","(STI8106)","(STI1703)","(STI14078)"],
   oferta3C = ["(STI14426)","(STI8105)","(STI10725)","(STI10709)"],
   ofertaEC = ["(STI10684)","(STI2592)","(STI2520)","(STI2591)"],
+  ofertaPPMS = ["(STI1325)","(STI1326)","(STI1327)","(STI1328)","(STI1329)","(STI1330)","(STI1331)"],
   ofertaPR = ["(STI15238)","(STI15239)","(STI15240)","(STI15241)","(STI15245)","(STI15242)"]
     ofertaTMS = ["(STI15460)","(STI5579)","(STI5605)","(STI5522)","(STI15458)","(STI15654)","(STI15459)","(STI15461)","(STI12237)","(STI5705)","(STI5731)","(STI5648)","(STI7846)","(STI7847)","(STI15653)","(STI7815)","(STI7816)","(STI15462)","(STI8207)"],
     ofertaSegAmbev = ["(STI11916)", "(STI11917)", "(STI11918)", "(STI11919)", "(STI11920)", "(STI11921)", "(STI11922)", "(STI11923)"];
@@ -317,6 +320,10 @@ function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
   }else if (ofertaEC.indexOf(sti) > -1) {
     status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoPR++ : (status == "Em tratamento"  ? tratamentoPR++ : "");
     situacao == "vencido" ? vencidoPR++ : (situacao == "proximo-vencer" ? pertovencimentoPR++ : naovencidoPR++);
+    return;
+  }else if (ofertaPPMS.indexOf(sti) > -1) {
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoPPMS++ : (status == "Em tratamento"  ? tratamentoPPMS++ : "");
+    situacao == "vencido" ? vencidoPPMS++ : (situacao == "proximo-vencer" ? pertovencimentoPPMS++ : naovencidoPPMS++);
     return;
   }else if (ofertaTMS.indexOf(sti) > -1) {
     status == "Aguardando tratamento" ? aguardandoTMS++ : (status == "Em tratamento" ? tratamentoTMS++ : "");
