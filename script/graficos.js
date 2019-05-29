@@ -594,6 +594,7 @@ function montaGraficoTMS(){
 }
 
 
+
 function montaGraficoPPMS(){
 	var divGrafico = document.getElementById('graficoPPMS').getContext('2d');
 	var graficoTMS = new Chart(divGrafico, {
@@ -612,6 +613,30 @@ function montaGraficoPPMS(){
 					backgroundColor: bgAguarTratamento,
 					borderColor: borderAguarTratamento,
 					data: [0, aguardandoPPMS]
+				}
+			]
+		},
+	    options: optionsDefault2
+	});
+}
+function montaGraficoDOT(){
+	var divGrafico = document.getElementById('graficoDOT').getContext('2d');
+	var graficoTMS = new Chart(divGrafico, {
+	    type: 'bar',
+	    data: {
+			labels: [tratamentoDOT + "" , aguardandoDOT + ""],
+			datasets: [
+				{
+					label: textoTratamento,
+					backgroundColor: bgTratamento,
+					borderColor: borderTratamento,
+					data: [tratamentoDOT, 0]
+				},
+				{
+					label: textoAguardando,
+					backgroundColor: bgAguarTratamento,
+					borderColor: borderAguarTratamento,
+					data: [0, aguardandoDOT]
 				}
 			]
 		},
