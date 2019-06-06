@@ -333,7 +333,7 @@ function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
     situacao == "vencido" ? vencidoPPMS++ : (situacao == "proximo-vencer" ? pertovencimentoPPMS++ : naovencidoPPMS++);
     return;
   }else if (ofertaTMS.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoTMS++ : (status == "Em tratamento" ? tratamentoTMS++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoTMS++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoTMS++ : "");
     situacao == "vencido" ? vencidotms++ : (situacao == "proximo-vencer" ? proximovencertms++ : naovencidotms++);
     return;
   }
