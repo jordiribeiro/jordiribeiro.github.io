@@ -284,28 +284,28 @@ function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
 	  //console.log(filaChamado)
     return;
   } else if (ofertaCamisa10.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoCamisa10++ : (status == "Em tratamento" ? tratamentoCamisa10++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoCamisa10++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoCamisa10++ : "");
     situacao == "vencido" ? vencidocamisa10++ : (situacao == "proximo-vencer" ? proximovencercamisa10++ : naovencidocamisa10++);
     return;
   } else if (ofertaModFabril.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoModFabril++ : (status == "Em tratamento" ? tratamentoModFabril++ : "");
+    status == "Aguardando tratamento" ? aguardandoModFabril++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoModFabril++ : "");
     situacao == "vencido" ? vencidomofab++ : (situacao == "proximo-vencer" ? proximovencermofab++ : naovencidomofab++);
     return;
   } else if (ofertaInterAct.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoInterAct++ : (status == "Em tratamento" ? tratamentoInterAct++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoInterAct++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoInterAct++ : "");
     situacao == "vencido" ? vencidointeract++ : (situacao == "proximo-vencer" ? proximovencerinteract++ : naovencidointeract++);
     return;
   } else if (ofertaPMcycle.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoPMcycle++ : (status == "Em tratamento" ? tratamentoPMcycle++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoPMcycle++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoPMcycle++ : "");
     situacao == "vencido" ? vencidopmcycle++ : (situacao == "proximo-vencer" ? proximovencerpmcycle++ : naovencidopmcycle++);
     return;
   }
   else if (ofertaDOT.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoDOT++ : (status == "Em tratamento" ? tratamentoDOT++ : "");
+    status == "Aguardando tratamento"  && !filaChamado.includes('Projetos') ? aguardandoDOT++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamentoDOT++ : "");
     situacao == "vencido" ? vencidopmcycle++ : (situacao == "proximo-vencer" ? proximovencerpmcycle++ : naovencidopmcycle++);
     return;
   } else if (ofertaSegAmbev.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" ? aguardandoSegAmbev++ : (status == "Em tratamento" ? tratamentoSegAmbev++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardandoSegAmbev++ : (status == "Em tratamento"  && !filaChamado.includes('Projetos') ? tratamentoSegAmbev++ : "");
     situacao == "vencido" ? vencidosegamb++ : (situacao == "proximo-vencer" ? proximovencersegamb++ : naovencidosegamb++);
     return;
   } else if (ofertaMES.indexOf(sti) > -1) {
@@ -317,7 +317,7 @@ function descobreOferta(sti, status,situacao,filaChamado,numchamado) {
     situacao == "vencido" ? vencidonovmes++ : (situacao == "proximo-vencer" ? proximovencernovmes++ : naovencidonovmes++);
     return;
   }else if (oferta3C.indexOf(sti) > -1) {
-    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardando3C++ : (status == "Em tratamento"  ? tratamento3C++ : "");
+    status == "Aguardando tratamento" && !filaChamado.includes('Projetos') ? aguardando3C++ : (status == "Em tratamento" && !filaChamado.includes('Projetos') ? tratamento3C++ : "");
     situacao == "vencido" ? vencido3C++ : (situacao == "proximo-vencer" ? pertovencimento3C++ : naovencido3C++);
     return;
   }else if (ofertaEC.indexOf(sti) > -1) {
