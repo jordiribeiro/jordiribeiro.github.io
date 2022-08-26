@@ -1,358 +1,537 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content="Bootstrap, Landing page, Template, Registration, Landing">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Grayrids">
+    <title>Espaço Evoluir Naya</title>
 
-<head>
-  <script src="./script/jquery.js"></script>
-  <script src="./script/Chart.min.js"></script>
-  <script src="./script/firebase.js"></script>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="./style/bootstrap.min.css">
-  <link rel="stylesheet" href="./style/style.css">
-  <link rel="stylesheet" href="./style/prettify.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/line-icons.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/owl.theme.css">
+    <link rel="stylesheet" href="css/nivo-lightbox.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/color-switcher.css">
+    <link rel="stylesheet" href="css/menu_sideslide.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/responsive.css">
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-  <script src="line.js"></script>
-  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-  <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
 
-
-  <script type="text/javascript">
-    function chartStepOne() {
-      var currentWindowHeight = $(window).height()
-      var canvas = document.getElementById("myLineChart")
-      var chartHeight = currentWindowHeight - 110
-      var lineChartParent = document.getElementById('linechartparent')
-      canvas.width = lineChartParent.clientWidth;
-      canvas.height = chartHeight;
-      generateLineChart();
-    }
-
-
-    //var cham = JSON.parse(localStorage.getItem("arraychamdados"));
-  </script>
-
-</head>
-
-<body>
-  <div class="container fluid">
-    <header style="user-select : none;">
-      <div class="row col-md-12 col-sm-12 col-xs-12 mb-1 ">
-        <div class="col-md-2 col-sm-4 col-xs-12">
-          <img src="./imagem/ambev_logo.svg" alt="logo ambev" class="img-thumbnail mt-4">
+  <body>
+    <!-- Header Section Start -->
+    <header id="slider-area">
+      <nav class="navbar navbar-expand-md fixed-top scrolling-navbar bg-white">
+        <div class="container">
+          <a class="navbar-brand" href="index.html"><span class="lni-cloud"></span>Espaço Evoluir Naya</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="lni-menu"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto w-100 justify-content-end">
+              <li class="nav-item">
+                <a class="nav-link page-scroll" href="#slider-area">Página Inicial</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link page-scroll" href="#services">Serviços Oferecidos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link page-scroll" href="#team">Quem somos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link page-scroll" href="#blog">Nosso Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link page-scroll" href="#contact">Entre em Contato</a>
+              </li>
+            </ul>
+          </div>
         </div>
+      </nav> 
 
-        <div class="col-md-8 col-sm-8 col-xs-12">
-          <h1 class="text-center font-weight-bold mt-3">CID - CHAMADOS - GRÁFICOS</h1>
-        </div>
-
-        <div class="col-md-2 col-sm-4 col-xs-12">
-          <img src="./imagem/logo-everis.jpg" alt="logo everis" class="img-thumbnail">
+      <!-- Main Carousel Section -->
+      <div id="carousel-area">
+        <div id="carousel-slider" class="carousel slide carousel-fade" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#carousel-slider" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-slider" data-slide-to="1"></li>
+            <li data-target="#carousel-slider" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+              <img src="img/slider/bg-1.jpg" alt="">
+              <div class="carousel-caption text-left">
+                <h3 class="wow fadeInRight" data-wow-delay="0.2s"></h1>
+                <h2 class="wow fadeInRight" data-wow-delay="0.4s">Espaço Evoluir Naya</h2>
+                <h4 class="wow fadeInRight" data-wow-delay="0.6s">Constelação Familiar, Coach sistêmico, Mesa Psiônica,Constelação Empresarial!</h4>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="img/slider/bg-3.jpg" alt="">
+              <div class="carousel-caption text-center">
+                <h3 class="wow fadeInDown" data-wow-delay="0.3s">Está esperando o que?</h3>
+                <h2 class="wow bounceIn" data-wow-delay="0.6s">Agende seu horario com um de nossos especialistas</h2>
+                <a href="#contact" class="btn btn-lg btn-common btn-effect wow fadeInUp" data-wow-delay="1.2s">Fale conosco!</a>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="img/slider/bg-2.jpg" alt="">
+              <div class="carousel-caption text-center">
+                <h3 class="wow fadeInDown" data-wow-delay="0.3s">Se inscreva no nosso</h3>
+                <h2 class="wow fadeInRight" data-wow-delay="0.6s">BLOG</h2>
+                <h4 class="wow fadeInUp" data-wow-delay="0.6s">para receber os textos que postamos!</h4>
+                <a href="#blog" class="btn btn-lg btn-border wow fadeInUp" data-wow-delay="0.9s">Inscrever</a>
+              </div>
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carousel-slider" role="button" data-slide="prev">
+            <span class="carousel-control" aria-hidden="true"><i class="lni-chevron-left"></i></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carousel-slider" role="button" data-slide="next">
+            <span class="carousel-control" aria-hidden="true"><i class="lni-chevron-right"></i></span>
+            <span class="sr-only">Next</span>
+          </a>
         </div>
       </div>
 
     </header>
+    <!-- Header Section End --> 
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#logistica" role="tab" aria-controls="home" aria-selected="true">Logistica</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#supply" role="tab" aria-controls="profile" aria-selected="false">Supply</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#chamados" role="tab" aria-controls="contact" aria-selected="false">Chamados perto Vencimento</a>
-      </li>
-    </ul>
-
-    <div class="tab-content  row " id="myTabContent" >
-
-      <div class="tab-pane fade show active row mt-2 col-md-12 col-sm-12   " id="logistica" role="tabpanel" aria-labelledby="home-tab">
-        <div class="col-md-4 col-sm-12  float-left " style="height:3000px">
-          <div class=" div shadow-lg bg-white rounded text-uppercase" id="chart2" >
-            <h5 class="text-center">Todos Chamados -  (<span id="totalUDI"></span>)</h5>
-            <canvas id="chamadosBarra"></canvas>
+    <!-- Services Section Start -->
+    <section id="services" class="section">
+      <div class="container">
+        <div class="section-header">          
+          <h2 class="section-title">Conheça Nossos Serviços</h2>
+          <p class="section-subtitle">Conheça nossos atendimentos!</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="0.2s">
+              <div class="icon color-1">
+                <i class="lni-pencil"></i>
+              </div>
+              <h4>Content Writing</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="col-md-8 col-sm-12  row  d-flex" >
-
-
-          <div class=" col-md-5 col-sm-12 p-2 m-2  shadow-lg bg-white rounded text-uppercase d-inline" id="inventarioEletronico">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".inventarioEle">Inv.Eletrônico</a></h5>
-            <canvas id="graficoIE"></canvas>
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="0.4s">
+              <div class="icon color-2">
+                <i class="lni-cog"></i>
+              </div>
+              <h4>Web Development</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
-
-
-          <div class="  col-md-5 col-sm-12 p-2 m-2  shadow-lg bg-white rounded text-uppercase" id="WMS">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".wmsfab">WMS</a></h5>
-            <canvas id="graficoWMS"></canvas>
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="0.6s">
+              <div class="icon color-3">
+                <i class="lni-stats-up"></i>
+              </div>
+              <h4>Graphic Design</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
-
-          <div class=" col-md-5 col-sm-12 col-xs-6  p-2 m-2 shadow-lg bg-white rounded text-uppercase" id="qlikView">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".qlick">QlikView</a></h5>
-            <canvas id="graficoQlikView"></canvas>
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="0.8s">
+              <div class="icon color-4">
+                <i class="lni-layers"></i>
+              </div>
+              <h4>UI/UX Design</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
-
-          <div class=" col-md-5 col-sm-12 col-xs-6  p-2 m-2 shadow-lg bg-white rounded text-uppercase" id="TMS">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">TMS</a></h5>
-            <canvas id="graficoTMS"></canvas>
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="1s">
+              <div class="icon color-5">
+                <i class="lni-tab"></i>
+              </div>
+              <h4>App Development</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
-
-          <div class=" col-md-5 col-sm-12 col-xs-6  p-2 m-2 shadow-lg bg-white rounded text-uppercase" id="TMS">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">PPMS</a></h5>
-            <canvas id="graficoPPMS"></canvas>
-          </div>
-
-          <div class=" col-md-5 col-sm-12 col-xs-6  p-2 m-2 shadow-lg bg-white rounded text-uppercase" id="DOT">
-            <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">DOT</a></h5>
-            <canvas id="graficoDOT"></canvas>
-          </div>
-        </div>
-
-      </div>
-
-
-      <div class="tab-pane fade row  col-md-12 col-sm-12 col-xs-12" id="supply" role="tabpanel" aria-labelledby="profile-tab">
-        <div class="col-md-3 col-sm-12 col-xs-3 m-1  p-2 shadow-lg bg-white rounded text-uppercase " id="Camisa10" style='display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".camisa10">Camisa10</a></h5>
-          <canvas id="graficoCamisa10"></canvas>
-        </div>
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1  p-2  shadow-lg bg-white rounded text-uppercase " id="PMCycle" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statuspmcycle">PMCycle</a></h5>
-          <canvas id="graficoPMcycle"></canvas>
-        </div>
-
-        <div class="col-md-3 col-sm-12 col-xs-3 m-1  p-2 shadow-lg bg-white rounded text-uppercase" id="ModFabril" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusmofab">Mod. Fabril</a></h5>
-          <canvas id="graficoModFabril"></canvas>
-        </div>
-
-        <div class="col-md-3 col-sm-12  col-xs-3 m-1  p-2 shadow-lg bg-white rounded text-uppercase" id="InterAct" style='display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".interactionlog">InterAct</a></h5>
-          <canvas id="graficoInterAct"></canvas>
-        </div>
-
-
-        <div class="col-md-3 col-sm-12 col-xs-3 m-1  p-2 shadow-lg bg-white rounded text-uppercase" id="SegAmbev" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statussegamb">SegAmbev</a></h5>
-          <canvas id="graficoSegAmbev"></canvas>
-        </div>
-
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1 p-2 shadow-lg  bg-white rounded text-uppercase" id="MES" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".mesleg">MES</a></h5>
-          <canvas id="graficoMES"></canvas>
-        </div>
-
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1 p-2   shadow-lg bg-white rounded text-uppercase" id="novoMES" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".">NovoMES</a></h5>
-          <canvas id="graficoNovoMES"></canvas>
-        </div>
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1 p-2    shadow-lg bg-white rounded text-uppercase" id="3C" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statussegamb">3C</a></h5>
-          <canvas id="grafico3C"></canvas>
-        </div>
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1 p-2  shadow-lg bg-white rounded text-uppercase" id="PR" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".mesleg">PORTAL REVENDAS</a></h5>
-          <canvas id="graficoPR"></canvas>
-        </div>
-
-
-        <div class="col-md-3 col-sm-12 col-xs-3  m-1 p-2  shadow-lg bg-white rounded text-uppercase" id="EASYC" style=' display:inline-block'>
-          <h5 class="text-center"><a href="#" class="link" data-toggle="modal" data-target=".statusTms">EasyComex</a></h5>
-          <canvas id="graficoEasy"></canvas>
-        </div>
-
-
-
-
-      </div>
-
-
-
-      <div class="tab-pane fade row  " id="chamados" role="tabpanel" aria-labelledby="contact-tab">
-        <div id="tabelaPertoVencer" class="table col-md-12 col-sm-12 col-xs-12 " style='display:inline'>
-
-        </div>
-      </div>
-
-
-    </div>
-
-
-    <!--############################################################# MODAIS INICIO ################################################## -->
-
-    <div class="modal fade camisa10" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content ">
-          <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <div class=" shadow-lg bg-white rounded text-uppercase">
-            <canvas id="graficoStatusCamisa10" height="200px"></canvas>
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="item-boxes services-item wow fadeInDown" data-wow-delay="1.2s">
+              <div class="icon color-6">
+                <i class="lni-briefcase"></i>
+              </div>
+              <h4>Digital Marketing</h4>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut.</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+    <!-- Services Section End -->
 
-  <div class="modal fade interactionlog" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusIAL" height="200px"></canvas>
+
+    <!-- Features Section Start -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">          
+          <h2 class="section-title">Why Choose Us</h2>
+          <span>Why</span>
+          <p class="section-subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos debitis.</p>
+        </div>
+        <div class="row">
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-layout"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-layout"></i></div>
+                <h4>Refreshing Design</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-tab"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-tab"></i></div>
+                <h4>Fully Responsive</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-rocket"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-rocket"></i></div>
+                <h4>Fast & Smooth</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-database"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-database"></i></div>
+                <h4>SEO Optimized</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-leaf"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-leaf"></i></div>
+                <h4>Clean Code</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
+          <!-- Start featured -->
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="featured-box">
+              <div class="featured-icon">
+                <i class="lni-pencil"></i>
+              </div>
+              <div class="featured-content">
+                <div class="icon-o"><i class="lni-pencil"></i></div>
+                <h4>Free 24/7 Support</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End featured -->
         </div>
       </div>
-    </div>
-  </div>
-  </div>
+    </section>
+    <!-- Features Section End -->    
 
-  <div class="modal fade inventarioEle" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusinventarioEle" height="200px"></canvas>
+
+
+
+
+    <!-- Team section Start -->
+    <section id="team" class="section">
+      <div class="container">
+        <div class="section-header">          
+          <h2 class="section-title">Our Team</h2>
+          <span>Team</span>
+          <p class="section-subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos debitis.</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="single-team">
+              <img src="img/team/team1.png" alt="">
+              <div class="team-details">
+                <div class="team-inner">
+                  <h4 class="team-title">Jhon Doe</h4>
+                  <p>Chief Technical Officer</p>
+                  <ul class="social-list">
+                    <li class="facebook"><a href="#"><i class="lni-facebook-filled"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="lni-twitter-filled"></i></a></li>
+                    <li class="google-plus"><a href="#"><i class="lni-google-plus"></i></a></li>
+                    <li class="linkedin"><a href="#"><i class="lni-linkedin-fill"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="single-team">
+              <img src="img/team/team2.png" alt="">
+              <div class="team-details">
+                <div class="team-inner">
+                  <h4 class="team-title">Luke Chesser</h4>
+                  <p>Marketing Executive</p>
+                  <ul class="social-list">
+                    <li class="facebook"><a href="#"><i class="lni-facebook-filled"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="lni-twitter-filled"></i></a></li>
+                    <li class="google-plus"><a href="#"><i class="lni-google-plus"></i></a></li>
+                    <li class="linkedin"><a href="#"><i class="lni-linkedin-fill"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="single-team">
+              <img src="img/team/team3.png" alt="">
+              <div class="team-details">
+                <div class="team-inner">                  
+                  <h4 class="team-title">David Givens</h4>
+                  <p>Business Manager</p>
+                  <ul class="social-list">
+                    <li class="facebook"><a href="#"><i class="lni-facebook-filled"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="lni-twitter-filled"></i></a></li>
+                    <li class="google-plus"><a href="#"><i class="lni-google-plus"></i></a></li>
+                    <li class="linkedin"><a href="#"><i class="lni-linkedin-fill"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="single-team">
+              <img src="img/team/team4.png" alt="">
+              <div class="team-details">
+                <div class="team-inner">
+                  <h4 class="team-title">Annie Spratt</h4>
+                  <p>Graphic Designer</p>
+                  <ul class="social-list">
+                    <li class="facebook"><a href="#"><i class="lni-facebook-filled"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="lni-twitter-filled"></i></a></li>
+                    <li class="google-plus"><a href="#"><i class="lni-google-plus"></i></a></li>
+                    <li class="linkedin"><a href="#"><i class="lni-linkedin-fill"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  </div>
+    </section>
+    <!-- Team section End -->
+    <!-- Blog Section -->
+    <section id="blog" class="section">
+      <!-- Container Starts -->
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Blog do Espaço Evoluir Naya</h2>
+          <p class="section-subtitle">Confira e acompanhe nossos textos em nosso blog!</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-8 col-md-8 col-xs-12 blog-item">
+            <!-- Blog Item Starts -->
+            <div class="blog-item-wrapper">
+              <div class="blog-item-img">
+                <a href="https://espacoevoluirnaya.blogspot.com/2022/08/forca-do-masculino-dia-dos-pais.html">
+                  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgecBtvsSL8hnmFmDSQelNWAwVXEC2aLZaJJTdMkTETCajGokPZdHB_lCfbIUNPMP5mDKbbEKBH2AvoRun2OE-0wcM2QNyVT9gzXv4vcdMLiRsa8bITC6IMzeEXfDAx7oxrCVvbEkhD3zW9vaOUNH-EzHjIgNixqAklydDYuto1_YAO9fw7kIuV5uaEmA/s509/istockphoto-1364409548-170667a.jpg" alt="">
+                </a>
+              </div>
+              <div class="blog-item-text">
+                <div class="date">  
+                <h3><a href="single-post.html">FORÇA DO MASCULINO - DIA DOS PAIS.</a></h3>
+              </div>
+            </div>
+            <!-- Blog Item Wrapper Ends-->
+          </div>
 
-  <div class="modal fade wmsfab" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatuswmsfab" height="200px"></canvas>
+            <!-- Blog Item Wrapper Ends-->
+          </div>
+
+
+            <!-- Blog Item Wrapper Ends-->
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  </div>
+    </section>
+    <!-- blog Section End -->
 
-  <div class="modal fade qlick" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusqlick" height="200px"></canvas>
+
+
+    <!-- Contact Section Start -->
+    <section id="contact" class="section">      
+      <div class="contact-form">
+        <div class="container">
+          <div class="section-header">          
+            <h2 class="section-title">Entre em contato</h2>
+          
+            <p class="section-subtitle">Entre em contato conosco para esclarecer sua dúvida e marcar um atendimento!</p>
+          </div>
+          <div class="row">          
+            <div class="col-lg-12 col-md-12 col-xs-12">
+              <div class="contact-deatils">
+                <!-- Content Info -->
+                <div class="contact-info_area">
+                  <div class="contact-info">
+                    <i class="lni-map"></i>
+                    <h5>Localização</h5>
+                    <p>Uberlândia, Minas Gerais.</p>
+                  </div>
+                  <!-- Content Info -->
+                  <div class="contact-info">
+                    <i class="lni-star"></i>
+                    <h5>E-mail</h5>
+                    <p>espacoevoluirnaya@gmail.com</p>
+                  </div>
+                  <!-- Content Info -->
+                  <div class="contact-info">
+                    <i class="lni-phone"></i>
+                    <h5>Telefone</h5>
+                    <p>+55 (34)99999-9999</p>
+                  </div>
+                  <!-- Icon -->
+                  <ul class="footer-social">
+                    <li><a class="instagram" href="https://www.instagram.com/espacoevoluirnaya/"><i class="lni-facebook-filled"></i></a></li>
+                    <li><a class="google-plus" href="https://espacoevoluirnaya.blogspot.com/"><i class="lni-google-plus"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>            
+    </section>
+    <!-- Contact Section End -->
+    
+    <!-- Map Section Start -->
+    <section id="google-map-area">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12 padding-0">
+            <object style="border:0; height: 450px; width: 100%;" data="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241549.5519984405!2d-48.40365110365697!3d-18.922019216822356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94a4450c10bbbaef%3A0xae370c93616d5c9c!2zVWJlcmzDom5kaWEsIE1H!5e0!3m2!1spt-BR!2sbr!4v1661460896269!5m2!1spt-BR!2sbr"></object>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  </div>
+    </section>
+    <!-- Map Section End -->
 
-  <div class="modal fade statuspmcycle" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatuspmcycle" height="200px"></canvas>
+    <!-- Footer Section Start -->
+    <footer>
+      <!-- Footer Area Start -->
+      <section class="footer-Content">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-mb-12">
+              <h1>Espaço Evoluir Naya</h1>
+              <div class="textwidget">
+                <p>Siga-nos em nossas redes sociais.</p>
+              </div>
+              <ul class="footer-social">
+                <li><a class="instagram" href="https://www.instagram.com/espacoevoluirnaya/"><i class="lni-instagram-filled"></i></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-mb-12">
+              <div class="widget">
+                <h3 class="block-title">Entre em contato conosco</h3>
+                <ul class="contact-footer">
+                  <li>
+                    <strong>Telefone :</strong> <span>+55 (34) 9999-9999</span>
+                  </li>
+                  <li>
+                    <strong>E-mail :</strong> <span><a href="#">espacoevoluirnaya@gmail.com</a></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Footer area End -->
+      <!-- Copyright Start  -->
+      <div id="copyright">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="site-info float-left">
+                <p>Crafted by <a href="https://www.linkedin.com/in/jordi-ribeiro-fonseca-21a94511a/" rel="nofollow">Jordi Fonseca</a></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  </div>
-  <div class="modal fade statusmofab" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusmofab" height="200px"></canvas>
-        </div>
+      <!-- Copyright End -->
+
+    </footer>
+    <!-- Footer Section End --> 
+
+    <!-- Go To Top Link -->
+    <a href="#" class="back-to-top">
+      <i class="lni-arrow-up"></i>
+    </a>
+
+    <div id="loader">
+      <div class="spinner">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
       </div>
     </div>
-  </div>
-  </div>
 
-  <div class="modal fade statussegamb" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatussegamb" height="200px"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-  <div class="modal fade mesleg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusmesleg" height="200px"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-  <div class="modal fade novmes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatusnovmes" height="200px"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-  <div class="modal fade statustms" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content ">
-        <button type="button" class="close align-left" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class=" shadow-lg bg-white rounded text-uppercase">
-          <canvas id="graficoStatustms" height="200px"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-  <!--############################################################# MODAIS FIM ################################################## -->
-
-</body>
-<script src="./script/graficos.js"></script>
-<script src="./script/main.js"></script>
-<script src="./script/conexao.js"></script>
-
-
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="js/jquery-min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/classie.js"></script>
+    <script src="js/color-switcher.js"></script>
+    <script src="js/jquery.mixitup.js"></script>
+    <script src="js/nivo-lightbox.js"></script>
+    <script src="js/owl.carousel.js"></script>    
+    <script src="js/jquery.stellar.min.js"></script>    
+    <script src="js/jquery.nav.js"></script>    
+    <script src="js/scrolling-nav.js"></script>    
+    <script src="js/jquery.easing.min.js"></script>     
+    <script src="js/wow.js"></script> 
+    <script src="js/jquery.vide.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>    
+    <script src="js/jquery.magnific-popup.min.js"></script>    
+    <script src="js/waypoints.min.js"></script>    
+    <script src="js/form-validator.min.js"></script>
+    <script src="js/contact-form-script.js"></script>   
+    <script src="js/main.js"></script>
+    
+  </body>
 </html>
