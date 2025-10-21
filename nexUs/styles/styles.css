@@ -117,6 +117,8 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
 .primary-nav a { color: var(--muted); text-decoration: none; padding: 0.25rem 0.4rem; border-radius: 8px; }
 .primary-nav a:hover, .primary-nav a:focus { color: var(--text); background: color-mix(in oklab, var(--surface), transparent 55%); }
 .nav-cta { display: none; gap: 0.6rem; }
+.user-menu { display: none; align-items: center; gap: 0.6rem; }
+.user-email { color: var(--muted); font-size: 0.95rem; }
 
 .nav-toggle { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; border: 1px solid var(--border); background: transparent; border-radius: 10px; cursor: pointer; }
 .nav-toggle .bar { height: 2px; width: 22px; background: var(--text); border-radius: 2px; margin-inline: auto; }
@@ -136,6 +138,7 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
   .primary-nav { gap: 1rem; }
   .primary-nav ul { display: inline-flex; }
   .nav-cta { display: inline-flex; }
+  .user-menu { display: inline-flex; }
 }
 
 /* Buttons */
@@ -230,5 +233,17 @@ section { scroll-margin-top: 88px; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Modal */
+.modal[hidden] { display: none !important; }
+.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
+.modal-dialog { position: relative; width: min(520px, calc(100% - 2rem)); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); padding: 1rem; }
+.modal-header { margin-bottom: 0.5rem; }
+.modal-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: transparent; cursor: pointer; }
+.modal-body { display: grid; gap: 0.75rem; }
+.field { display: grid; gap: 0.35rem; }
+.field input { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.65rem 0.8rem; }
+.actions { display: grid; gap: 0.5rem; margin-top: 0.25rem; }
 
 

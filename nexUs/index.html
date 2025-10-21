@@ -27,6 +27,7 @@
     <link rel="preload" href="styles/styles.css" as="style" />
     <link rel="stylesheet" href="styles/styles.css" />
     <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#inicio">Pular para o conteúdo</a>
@@ -56,13 +57,18 @@
             <li><a href="#beneficios">Benefícios</a></li>
             <li><a href="#mentorias">Mentorias</a></li>
             <li><a href="#planos">Planos</a></li>
+            <li><a href="#membros">Membros</a></li>
             <li><a href="#depoimentos">Depoimentos</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contato">Contato</a></li>
           </ul>
           <div class="nav-cta">
             <a class="btn btn-outline" href="#planos">Assinar</a>
-            <a class="btn btn-primary" href="#contato">Entrar</a>
+            <button class="btn btn-primary" id="openAuthBtn" type="button">Entrar</button>
+          </div>
+          <div class="user-menu" id="userMenu" hidden>
+            <span class="user-email" id="userEmail" aria-live="polite"></span>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
           </div>
         </nav>
       </div>
@@ -215,6 +221,30 @@
         </div>
       </section>
 
+      <section id="membros" class="section" aria-labelledby="membros-title" data-members-only hidden>
+        <div class="container">
+          <h2 id="membros-title">Área do Membro</h2>
+          <p class="lead">Bem-vindo! Aqui você encontra materiais exclusivos, agendas e links da comunidade.</p>
+          <div class="features grid-3">
+            <article class="feature-card">
+              <h3>Biblioteca Premium</h3>
+              <p>Templates, checklists e aulas sob demanda.</p>
+              <a class="btn btn-outline" href="#">Acessar</a>
+            </article>
+            <article class="feature-card">
+              <h3>Calendário de Mentorias</h3>
+              <p>Agenda das próximas sessões com mentores.</p>
+              <a class="btn btn-outline" href="#">Ver agenda</a>
+            </article>
+            <article class="feature-card">
+              <h3>Comunidade</h3>
+              <p>Grupos temáticos e networking.</p>
+              <a class="btn btn-outline" href="#">Entrar</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="depoimentos" class="section" aria-labelledby="depoimentos-title">
         <div class="container">
           <h2 id="depoimentos-title">Depoimentos</h2>
@@ -288,6 +318,35 @@
         </div>
       </section>
     </main>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="authClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="authTitle">Entrar no NexUS</h2>
+          <p class="muted">Acesse sua conta ou crie uma nova.</p>
+        </div>
+        <div class="modal-body">
+          <form id="authForm" novalidate>
+            <div class="field">
+              <label for="authEmail">Email</label>
+              <input type="email" id="authEmail" name="email" required autocomplete="email" inputmode="email" />
+            </div>
+            <div class="field">
+              <label for="authPassword">Senha</label>
+              <input type="password" id="authPassword" name="password" required autocomplete="current-password" />
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary full" id="loginBtn" type="submit">Entrar</button>
+              <button class="btn btn-outline full" id="registerBtn" type="button">Criar conta</button>
+            </div>
+            <p class="form-note" id="authNote" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <footer class="site-footer" role="contentinfo">
       <div class="container footer-inner">
