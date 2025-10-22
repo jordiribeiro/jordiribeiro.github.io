@@ -29,6 +29,8 @@
     <script defer src="scripts/script.js"></script>
     <script type="module" src="scripts/auth.js"></script>
     <script type="module" src="scripts/app.js"></script>
+    <!-- opcional/local: arquivo ignorado no deploy para injetar chaves locais -->
+    <script defer src="scripts/config.local.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#inicio">Pular para o conteúdo</a>
@@ -56,7 +58,7 @@
             <li><a href="#beneficios">Benefícios</a></li>
             <li><a href="#mentorias">Mentorias</a></li>
             <li><a href="#planos">Planos</a></li>
-            <li><a href="#membros">Membros</a></li>
+            <li><a href="members.html">Membros</a></li>
             <li><a href="#depoimentos">Depoimentos</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contato">Contato</a></li>
@@ -405,6 +407,52 @@
         </div>
       </section>
     </main>
+
+    <!-- CRM Modal -->
+    <div class="modal" id="crmModal" role="dialog" aria-modal="true" aria-labelledby="crmType" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="crmClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="crmType">CRM</h2>
+        </div>
+        <div class="modal-body">
+          <form id="crmForm">
+            <div id="crmContact" class="grid-2" hidden>
+              <div class="field">
+                <label for="crmName">Nome</label>
+                <input id="crmName" />
+              </div>
+              <div class="field">
+                <label for="crmEmail">Email</label>
+                <input id="crmEmail" />
+              </div>
+            </div>
+            <div id="crmDeal" class="grid-2" hidden>
+              <div class="field">
+                <label for="crmTitle">Título</label>
+                <input id="crmTitle" />
+              </div>
+              <div class="field">
+                <label for="crmValue">Valor (R$)</label>
+                <input id="crmValue" type="number" min="0" step="1" />
+              </div>
+              <div class="field">
+                <label for="crmStatus">Status</label>
+                <select id="crmStatus">
+                  <option value="open">Aberta</option>
+                  <option value="won">Ganha</option>
+                  <option value="lost">Perdida</option>
+                </select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <!-- Auth Modal -->
     <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" hidden>

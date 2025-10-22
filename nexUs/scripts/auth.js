@@ -43,6 +43,7 @@ import {
   }
 
   openAuthBtn?.addEventListener('click', openModal);
+  document.getElementById('openAuthBtn2')?.addEventListener('click', openModal);
   authClose?.addEventListener('click', closeModal);
   authModal?.addEventListener('click', (e) => {
     const target = e.target;
@@ -76,6 +77,18 @@ import {
 
   onAuthStateChanged(auth, (user) => {
     updateUI(user);
+    // Guard on members.html
+    const guard = document.getElementById('guard');
+    const app = document.querySelector('[data-members-only]');
+    if (guard && app) {
+      guard.hidden = !!user;
+      if (app instanceof HTMLElement) app.hidden = !user;
+    }
+    // If not logged in and on members page, redirect to homepage with auth prompt
+    const onMembersPage = typeof window !== 'undefined' && window.location.pathname.includes('members.html');
+    if (!user && onMembersPage) {
+      window.location.replace('index.html?auth=1');
+    }
   });
 
   // Form actions

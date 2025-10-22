@@ -11,6 +11,13 @@
   // Set current year
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  // If redirected with auth=1, open auth modal after load
+  const qp = new URLSearchParams(window.location.search);
+  if (qp.get('auth') === '1') {
+    const open = () => document.getElementById('openAuthBtn')?.dispatchEvent(new Event('click'));
+    if (document.readyState === 'complete') open(); else window.addEventListener('load', open, { once: true });
+  }
+
   // Mobile nav toggle
   function closeNav() {
     if (!primaryNav) return;
@@ -51,6 +58,19 @@
       if (typeof target.tabIndex !== 'number' || target.tabIndex < 0) target.tabIndex = -1;
       target.focus({ preventScroll: true });
     }, 300);
+  });
+
+  // Simple carousel controls
+  document.addEventListener('click', (e) => {
+    const prev = e.target instanceof HTMLElement && e.target.closest('[data-prev]');
+    const next = e.target instanceof HTMLElement && e.target.closest('[data-next]');
+    if (!prev && !next) return;
+    const carousel = (prev || next)?.closest('[data-carousel]');
+    if (!carousel) return;
+    const track = carousel.querySelector('[data-track]');
+    if (!(track instanceof HTMLElement)) return;
+    const delta = track.clientWidth * 0.9;
+    track.scrollBy({ left: prev ? -delta : delta, behavior: 'smooth' });
   });
 
   // Theme toggle removed

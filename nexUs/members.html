@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NexUS - App do Membro: CRM, Perfil, IA e Dashboard." />
+    <title>NexUS — App do Membro</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img src="assets/logo.svg" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text">NexUS</span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="index.html#sobre">Sobre</a></li>
+            <li><a href="index.html#beneficios">Benefícios</a></li>
+            <li><a href="index.html#mentorias">Mentorias</a></li>
+            <li><a href="index.html#planos">Planos</a></li>
+            <li><a href="members.html" aria-current="page">Membros</a></li>
+            <li><a href="index.html#depoimentos">Depoimentos</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
+            <li><a href="index.html#contato">Contato</a></li>
+          </ul>
+          <div class="nav-cta">
+            <a class="btn btn-outline" href="index.html#planos">Assinar</a>
+            <button class="btn btn-primary" id="openAuthBtn" type="button">Entrar</button>
+          </div>
+          <div class="user-menu" id="userMenu" hidden>
+            <span class="user-email" id="userEmail" aria-live="polite"></span>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="membros-title">
+      <div class="container">
+        <h1 id="membros-title">App do Membro</h1>
+
+        <div id="guard">
+          <p class="lead">Faça login para acessar seu CRM, Perfil, IA e Dashboard.</p>
+          <button class="btn btn-primary" id="openAuthBtn2" type="button">Entrar</button>
+        </div>
+
+        <div id="membersApp" data-members-only hidden>
+          <div class="tabs" role="tablist" aria-label="Seções do app">
+            <button role="tab" aria-selected="false" aria-controls="tab-perfil" id="tab-perfil-tab" class="tab">Perfil</button>
+            <button role="tab" aria-selected="true" aria-controls="tab-crm" id="tab-crm-tab" class="tab">CRM</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-treinamentos" id="tab-treinamentos-tab" class="tab">Treinamentos</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-ia" id="tab-ia-tab" class="tab">IA</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-dashboard" id="tab-dashboard-tab" class="tab">Dashboard</button>
+          </div>
+
+          <section id="tab-perfil" role="tabpanel" aria-labelledby="tab-perfil-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Perfil da Empresa</h3>
+            <form id="profileForm" class="profile-form">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="pfType">Porte</label>
+                  <select id="pfType" name="type" required>
+                    <option value="micro">Micro</option>
+                    <option value="pequena">Pequena</option>
+                    <option value="media">Média</option>
+                    <option value="grande">Grande</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="pfRevenue">Faturamento anual (R$)</label>
+                  <input type="number" id="pfRevenue" name="revenue" min="0" step="1000" placeholder="1000000" />
+                </div>
+                <div class="field">
+                  <label for="pfCnpj">CNPJ</label>
+                  <input type="text" id="pfCnpj" name="cnpj" placeholder="00.000.000/0000-00" />
+                </div>
+                <div class="field">
+                  <label for="pfStartedAt">Início das operações</label>
+                  <input type="date" id="pfStartedAt" name="startedAt" />
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" type="submit">Salvar perfil</button>
+              </div>
+              <p class="form-note" id="profileNote" role="status" aria-live="polite"></p>
+            </form>
+
+            <div class="grid-3" style="margin-top: 1rem;">
+              <div class="card stat">
+                <p class="stat-label">Incentivo fiscal (1%)</p>
+                <p class="stat-num" id="eligibilityIncentive">—</p>
+              </div>
+              <div class="card stat">
+                <p class="stat-label">Isenção 3 meses</p>
+                <p class="stat-num" id="eligibilityExemption">—</p>
+              </div>
+              <div class="card stat">
+                <p class="stat-label">Dias restantes (isenção)</p>
+                <p class="stat-num" id="eligibilityDays">—</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-crm" role="tabpanel" aria-labelledby="tab-crm-tab" class="tab-panel" tabindex="0">
+            <div class="grid-2">
+              <div>
+                <h3>Contatos</h3>
+                <form id="contactForm" class="cta-form">
+                  <input type="text" name="name" placeholder="Nome" required />
+                  <input type="email" name="email" placeholder="Email" required />
+                  <button class="btn btn-primary" type="submit">Salvar</button>
+                </form>
+                <details open id="contactsPanel" style="margin-top:0.75rem;">
+                  <summary>Lista de contatos (<span id="contactsCount">0</span>)</summary>
+                  <div class="table-wrap">
+                    <table class="table" aria-label="Contatos">
+                      <thead>
+                        <tr><th>Nome</th><th>Email</th><th style="width:140px;">Ações</th></tr>
+                      </thead>
+                      <tbody id="contactsTbody"></tbody>
+                    </table>
+                  </div>
+                </details>
+              </div>
+              <div>
+                <h3>Negociações</h3>
+                <form id="dealForm" class="cta-form">
+                  <input type="text" name="title" placeholder="Título" required />
+                  <input type="number" name="value" placeholder="Valor (R$)" required />
+                  <button class="btn btn-primary" type="submit">Salvar</button>
+                </form>
+                <details open id="dealsPanel" style="margin-top:0.75rem;">
+                  <summary>Negociações (<span id="dealsCount">0</span>)</summary>
+                  <div class="table-wrap">
+                    <table class="table" aria-label="Negociações">
+                      <thead>
+                        <tr><th>Título</th><th>Valor</th><th>Status</th><th style="width:140px;">Ações</th></tr>
+                      </thead>
+                      <tbody id="dealsTbody"></tbody>
+                    </table>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-treinamentos" role="tabpanel" aria-labelledby="tab-treinamentos-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Treinamentos</h3>
+            <div class="video-embed sm" aria-label="Vídeo de treinamento">
+              <iframe
+                src="https://www.youtube.com/embed/lQV5myhSqCs?list=PLUkv8hZ8kunVjEKfgPdLQlD_Nk1vdILgq"
+                title="Treinamento NexUS no YouTube"
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <p class="muted" style="margin-top:0.5rem;">Playlist completa no YouTube.</p>
+
+            <div class="carousel" data-carousel>
+              <button class="carousel-btn prev" type="button" aria-label="Anterior" data-prev>‹</button>
+              <div class="carousel-track" data-track>
+                <div class="carousel-item">
+                  <div class="video-embed xs">
+                    <iframe
+                      src="https://www.youtube.com/embed/dTkS_ecWoGo"
+                      title="Vídeo complementar 1"
+                      loading="lazy"
+                      referrerpolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                </div>
+                <div class="carousel-item">
+                  <div class="video-embed xs">
+                    <iframe
+                      src="https://www.youtube.com/embed/grpv0Gi0HCg"
+                      title="Vídeo complementar 2"
+                      loading="lazy"
+                      referrerpolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                </div>
+                  <div class="carousel-item">
+                    <div class="video-embed xs">
+                      <iframe
+                        src="https://www.youtube.com/embed/CvqE6vATDwA"
+                        title="Vídeo complementar 3"
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <div class="video-embed xs">
+                      <iframe
+                        src="https://www.youtube.com/embed/d6O_gyGVPak"
+                        title="Vídeo complementar 4"
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+              </div>
+              <button class="carousel-btn next" type="button" aria-label="Próximo" data-next>›</button>
+            </div>
+          </section>
+
+          <section id="tab-ia" role="tabpanel" aria-labelledby="tab-ia-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Planejamento com IA</h3>
+            <div class="key-row">
+              <label for="aiProvider" class="sr-only">Provedor</label>
+              <select id="aiProvider" aria-label="Provedor de IA">
+                <option value="abacus">Abacus.AI (padrão)</option>
+                <option value="openai">OpenAI</option>
+              </select>
+              <button class="btn btn-outline" type="button" id="clearChatBtn">Limpar</button>
+            </div>
+            <div class="chat">
+              <div id="chatMessages" class="chat-messages" aria-live="polite" aria-label="Mensagens do chat"></div>
+              <form id="chatForm" class="chat-input-row">
+                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." autocomplete="off" required />
+                <button class="btn btn-primary" type="submit">Enviar</button>
+              </form>
+            </div>
+          </section>
+
+          <section id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Dashboard</h3>
+            <div class="grid-3">
+              <div class="card stat"><p class="stat-num" id="metricContacts">0</p><p class="stat-label">Contatos</p></div>
+              <div class="card stat"><p class="stat-num" id="metricDeals">0</p><p class="stat-label">Negociações</p></div>
+              <div class="card stat"><p class="stat-num" id="metricPipeline">R$ 0</p><p class="stat-label">Pipeline</p></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="authClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="authTitle">Entrar no NexUS</h2>
+          <p class="muted">Acesse sua conta ou crie uma nova.</p>
+        </div>
+        <div class="modal-body">
+          <form id="authForm" novalidate>
+            <div class="field">
+              <label for="authEmail">Email</label>
+              <input type="email" id="authEmail" name="email" required autocomplete="email" inputmode="email" />
+            </div>
+            <div class="field">
+              <label for="authPassword">Senha</label>
+              <input type="password" id="authPassword" name="password" required autocomplete="current-password" />
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary full" id="loginBtn" type="submit">Entrar</button>
+              <button class="btn btn-outline full" id="registerBtn" type="button">Criar conta</button>
+            </div>
+            <p class="form-note" id="authNote" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+  </body>
+</html>
+
+

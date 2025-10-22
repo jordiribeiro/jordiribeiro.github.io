@@ -137,6 +137,9 @@ const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
 ]);
 
 app.use((req, res, next) => {
@@ -191,6 +194,12 @@ http://localhost:5001/SEU_PROJETO/us-central1/ai/plan
   - O app chamará `https://api.openai.com/v1/chat/completions` diretamente do navegador sempre que `aiPlannerEndpoint` estiver vazio.
 
 ATENÇÃO: guardar a chave no navegador é conveniente para uso pessoal, porém não é recomendado em produção multiusuário. Prefira o proxy via Function para esconder a chave no servidor quando publicar para múltiplos usuários.
+
+## IA Planner com Abacus.AI (alternativa com cota gratuita)
+
+- Na aba IA, selecione o provedor "Abacus.AI" e cole sua API Key do Abacus.
+- O app envia POST para `https://routellm.abacus.ai/v1/chat/completions` com `{ model: 'route-llm', messages, stream: false }`.
+- Para usar via proxy (Worker), troque o destino no Worker e defina `ABACUS_API_KEY`.
 
 ## Cloudflare Worker (proxy recomendado)
 
