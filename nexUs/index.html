@@ -28,27 +28,26 @@
     <link rel="stylesheet" href="styles/styles.css" />
     <script defer src="scripts/script.js"></script>
     <script type="module" src="scripts/auth.js"></script>
+    <script type="module" src="scripts/app.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#inicio">Pular para o conteúdo</a>
 
     <header class="site-header" role="banner">
-      <div class="container header-inner">
-        <a class="brand" href="#inicio" aria-label="NexUS - Início">
-          <img src="assets/logo.svg" width="36" height="36" alt="Logo NexUS" />
-          <span class="brand-text">NexUS</span>
-        </a>
-
-        <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Alternar tema">
-          <span class="icon" aria-hidden="true"></span>
-          <span class="label">Tema</span>
-        </button>
-
-        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
-          <span class="bar" aria-hidden="true"></span>
-          <span class="bar" aria-hidden="true"></span>
-          <span class="bar" aria-hidden="true"></span>
-        </button>
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="#inicio" aria-label="NexUS - Início">
+              <img src="assets/logo.svg" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text">NexUS</span>
+            </a>
+        </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
 
         <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
           <ul>
@@ -223,25 +222,113 @@
 
       <section id="membros" class="section" aria-labelledby="membros-title" data-members-only hidden>
         <div class="container">
-          <h2 id="membros-title">Área do Membro</h2>
-          <p class="lead">Bem-vindo! Aqui você encontra materiais exclusivos, agendas e links da comunidade.</p>
-          <div class="features grid-3">
-            <article class="feature-card">
-              <h3>Biblioteca Premium</h3>
-              <p>Templates, checklists e aulas sob demanda.</p>
-              <a class="btn btn-outline" href="#">Acessar</a>
-            </article>
-            <article class="feature-card">
-              <h3>Calendário de Mentorias</h3>
-              <p>Agenda das próximas sessões com mentores.</p>
-              <a class="btn btn-outline" href="#">Ver agenda</a>
-            </article>
-            <article class="feature-card">
-              <h3>Comunidade</h3>
-              <p>Grupos temáticos e networking.</p>
-              <a class="btn btn-outline" href="#">Entrar</a>
-            </article>
+          <h2 id="membros-title">App do Membro</h2>
+          <div class="tabs" role="tablist" aria-label="Seções do app">
+            <button role="tab" aria-selected="false" aria-controls="tab-perfil" id="tab-perfil-tab" class="tab">Perfil</button>
+            <button role="tab" aria-selected="true" aria-controls="tab-crm" id="tab-crm-tab" class="tab">CRM</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-treinamentos" id="tab-treinamentos-tab" class="tab">Treinamentos</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-ia" id="tab-ia-tab" class="tab">IA</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-dashboard" id="tab-dashboard-tab" class="tab">Dashboard</button>
           </div>
+
+          <section id="tab-perfil" role="tabpanel" aria-labelledby="tab-perfil-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Perfil da Empresa</h3>
+            <form id="profileForm" class="profile-form">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="pfType">Porte</label>
+                  <select id="pfType" name="type" required>
+                    <option value="micro">Micro</option>
+                    <option value="pequena">Pequena</option>
+                    <option value="media">Média</option>
+                    <option value="grande">Grande</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="pfRevenue">Faturamento anual (R$)</label>
+                  <input type="number" id="pfRevenue" name="revenue" min="0" step="1000" placeholder="1000000" />
+                </div>
+                <div class="field">
+                  <label for="pfCnpj">CNPJ</label>
+                  <input type="text" id="pfCnpj" name="cnpj" placeholder="00.000.000/0000-00" />
+                </div>
+                <div class="field">
+                  <label for="pfStartedAt">Início das operações</label>
+                  <input type="date" id="pfStartedAt" name="startedAt" />
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" type="submit">Salvar perfil</button>
+              </div>
+              <p class="form-note" id="profileNote" role="status" aria-live="polite"></p>
+            </form>
+
+            <div class="grid-3" style="margin-top: 1rem;">
+              <div class="card stat">
+                <p class="stat-label">Incentivo fiscal (1%)</p>
+                <p class="stat-num" id="eligibilityIncentive">—</p>
+              </div>
+              <div class="card stat">
+                <p class="stat-label">Isenção 3 meses</p>
+                <p class="stat-num" id="eligibilityExemption">—</p>
+              </div>
+              <div class="card stat">
+                <p class="stat-label">Dias restantes (isenção)</p>
+                <p class="stat-num" id="eligibilityDays">—</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-crm" role="tabpanel" aria-labelledby="tab-crm-tab" class="tab-panel" tabindex="0">
+            <div class="grid-2">
+              <div>
+                <h3>Contatos</h3>
+                <form id="contactForm" class="cta-form">
+                  <input type="text" name="name" placeholder="Nome" required />
+                  <input type="email" name="email" placeholder="Email" required />
+                  <button class="btn btn-primary" type="submit">Salvar</button>
+                </form>
+                <ul id="contactList" class="list"></ul>
+              </div>
+              <div>
+                <h3>Negociações</h3>
+                <form id="dealForm" class="cta-form">
+                  <input type="text" name="title" placeholder="Título" required />
+                  <input type="number" name="value" placeholder="Valor (R$)" required />
+                  <button class="btn btn-primary" type="submit">Salvar</button>
+                </form>
+                <ul id="dealList" class="list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-treinamentos" role="tabpanel" aria-labelledby="tab-treinamentos-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Treinamentos</h3>
+            <p class="muted">Gestão, vendas, marketing e finanças — biblioteca em construção.</p>
+          </section>
+
+          <section id="tab-ia" role="tabpanel" aria-labelledby="tab-ia-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Planejamento com IA</h3>
+            <div class="key-row">
+              <input type="password" id="openaiKey" placeholder="Cole sua OpenAI API Key (sk-...)" aria-label="OpenAI API Key" />
+              <button class="btn btn-outline" type="button" id="saveOpenaiKeyBtn">Salvar chave</button>
+            </div>
+            <p class="form-note" id="openaiKeyNote" aria-live="polite"></p>
+            <form id="aiPlanForm" class="cta-form">
+              <input type="text" name="goal" placeholder="Meta ex.: aumentar faturamento em 20%" required />
+              <button class="btn btn-primary" type="submit">Gerar plano</button>
+            </form>
+            <pre id="aiPlanOutput" class="pre"></pre>
+          </section>
+
+          <section id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Dashboard</h3>
+            <div class="grid-3">
+              <div class="card stat"><p class="stat-num" id="metricContacts">0</p><p class="stat-label">Contatos</p></div>
+              <div class="card stat"><p class="stat-num" id="metricDeals">0</p><p class="stat-label">Negociações</p></div>
+              <div class="card stat"><p class="stat-num" id="metricPipeline">R$ 0</p><p class="stat-label">Pipeline</p></div>
+            </div>
+          </section>
         </div>
       </section>
 

@@ -107,12 +107,14 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
   backdrop-filter: saturate(1.2) blur(8px);
   border-bottom: 1px solid var(--border);
 }
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; }
+.header-inner { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.5rem; padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.header-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 700; color: var(--text); text-decoration: none; }
 .brand img { border-radius: 8px; }
 .brand-text { letter-spacing: 0.2px; }
 
 .primary-nav { display: flex; align-items: center; gap: 1.25rem; }
+.primary-nav { justify-content: flex-end; min-width: 0; }
 .primary-nav ul { display: none; list-style: none; gap: 1rem; padding: 0; }
 .primary-nav a { color: var(--muted); text-decoration: none; padding: 0.25rem 0.4rem; border-radius: 8px; }
 .primary-nav a:hover, .primary-nav a:focus { color: var(--text); background: color-mix(in oklab, var(--surface), transparent 55%); }
@@ -123,9 +125,7 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
 .nav-toggle { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; border: 1px solid var(--border); background: transparent; border-radius: 10px; cursor: pointer; }
 .nav-toggle .bar { height: 2px; width: 22px; background: var(--text); border-radius: 2px; margin-inline: auto; }
 
-.theme-toggle { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); background: transparent; color: var(--muted); height: 44px; padding: 0 0.75rem; border-radius: 10px; cursor: pointer; }
-.theme-toggle .icon { width: 1.1rem; height: 1.1rem; display: inline-block; background: radial-gradient(circle at 30% 30%, #ffcc33, #f59e0b 60%, transparent 61%), conic-gradient(from 0deg, #f59e0b, #f59e0b 180deg, transparent 180deg);
-  border-radius: 999px; }
+/* theme-toggle removed */
 
 /* Mobile menu open state */
 .primary-nav.open { position: fixed; inset: 64px 0 0 0; background: var(--bg); border-top: 1px solid var(--border); padding: 1rem 1.25rem; display: grid; gap: 1rem; }
@@ -140,6 +140,18 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
   .nav-cta { display: inline-flex; }
   .user-menu { display: inline-flex; }
 }
+
+/* Prevent logo/menu overlap on tighter desktop widths */
+@media (min-width: 920px) and (max-width: 1200px) {
+  .brand-text { display: none; }
+  .brand img { width: 32px; height: 32px; }
+  .primary-nav { gap: 0.75rem; }
+  .primary-nav ul { gap: 0.6rem; }
+  .nav-cta { gap: 0.5rem; }
+}
+
+/* Compact theme toggle on small screens to avoid overlap */
+/* theme-toggle compact removed */
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; font-weight: 600; border-radius: 12px; padding: 0.65rem 1rem; border: 1px solid transparent; cursor: pointer; }
@@ -244,6 +256,19 @@ section { scroll-margin-top: 88px; }
 .modal-body { display: grid; gap: 0.75rem; }
 .field { display: grid; gap: 0.35rem; }
 .field input { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.65rem 0.8rem; }
+.field select { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.55rem 0.7rem; }
+.profile-form .actions { margin-top: 0.5rem; }
 .actions { display: grid; gap: 0.5rem; margin-top: 0.25rem; }
+
+/* Tabs & member app */
+.tabs { display: inline-flex; gap: 0.5rem; border-bottom: 1px solid var(--border); margin: 0.5rem 0 1rem; }
+.tab { appearance: none; background: transparent; border: 1px solid var(--border); border-bottom: none; padding: 0.5rem 0.75rem; border-radius: 10px 10px 0 0; cursor: pointer; color: var(--muted); }
+.tab[aria-selected="true"] { color: var(--text); background: var(--bg); border-color: color-mix(in oklab, var(--brand-500), var(--border)); }
+.tab-panel { padding-top: 0.5rem; }
+.list { list-style: none; padding: 0; margin-top: 0.75rem; display: grid; gap: 0.5rem; }
+.list li { display: flex; justify-content: space-between; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 0.6rem 0.75rem; }
+.pre { white-space: pre-wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 0.75rem; margin-top: 0.75rem; }
+.key-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.key-row input { flex: 1; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.65rem 0.8rem; }
 
 

@@ -4,7 +4,6 @@
   const htmlEl = document.documentElement;
   const navToggle = document.getElementById('navToggle');
   const primaryNav = document.getElementById('primaryNav');
-  const themeToggle = document.getElementById('themeToggle');
   const ctaForm = document.getElementById('ctaForm');
   const formNote = document.getElementById('formNote');
   const yearEl = document.getElementById('year');
@@ -54,33 +53,7 @@
     }, 300);
   });
 
-  // Theme toggle with localStorage
-  const THEME_KEY = 'nexus.theme';
-  function applyTheme(theme) {
-    if (theme === 'light' || theme === 'dark') {
-      htmlEl.setAttribute('data-theme', theme);
-      themeToggle?.setAttribute('aria-pressed', String(theme === 'dark'));
-    } else {
-      htmlEl.setAttribute('data-theme', 'auto');
-      themeToggle?.setAttribute('aria-pressed', 'false');
-    }
-  }
-  function initTheme() {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === 'light' || saved === 'dark') applyTheme(saved);
-    else applyTheme('auto');
-  }
-  themeToggle?.addEventListener('click', () => {
-    const current = htmlEl.getAttribute('data-theme') || 'auto';
-    let next = 'dark';
-    if (current === 'dark') next = 'light';
-    else if (current === 'light') next = 'auto';
-    else next = 'dark';
-    applyTheme(next);
-    if (next === 'auto') localStorage.removeItem(THEME_KEY);
-    else localStorage.setItem(THEME_KEY, next);
-  });
-  initTheme();
+  // Theme toggle removed
 
   // Simple form handling (demo only)
   ctaForm?.addEventListener('submit', (e) => {
