@@ -100,6 +100,9 @@
         const priceEl = document.getElementById('selectedPrice');
         const form = document.getElementById('checkoutForm');
         const note = document.getElementById('checkoutNote');
+        const cardInput = document.getElementById('card');
+        const expInput = document.getElementById('exp');
+        const cvvInput = document.getElementById('cvv');
         const params = new URLSearchParams(location.search);
         const plan = (params.get('plan') || 'growth').toLowerCase();
         const planMap = {
@@ -110,10 +113,88 @@
         const picked = planMap[plan] || planMap.growth;
         if (planEl) planEl.textContent = picked.name;
         if (priceEl) priceEl.textContent = picked.price;
+
+        // Helpers: masks & validation
+        const onlyDigits = (s) => String(s || '').replace(/\D+/g, '');
+        function detectCardType(digits) { return /^3[47]/.test(digits) ? 'amex' : 'other'; }
+        function formatCard(digits) {
+          const type = detectCardType(digits);
+          if (type === 'amex') {
+            const a = digits.slice(0, 4);
+            const b = digits.slice(4, 10);
+            const c = digits.slice(10, 15);
+            return [a, b, c].filter(Boolean).join(' ');
+          }
+          return digits.replace(/(.{4})/g, '$1 ').trim();
+        }
+        function luhnCheck(digits) {
+          if (!digits || digits.length < 13) return false;
+          let sum = 0; let shouldDouble = false;
+          for (let i = digits.length - 1; i >= 0; i--) {
+            let d = digits.charCodeAt(i) - 48;
+            if (d < 0 || d > 9) return false;
+            if (shouldDouble) { d *= 2; if (d > 9) d -= 9; }
+            sum += d; shouldDouble = !shouldDouble;
+          }
+          return sum % 10 === 0;
+        }
+        function validateExp(value) {
+          const m = String(value || '').match(/^(\d{2})\/(\d{2})$/);
+          if (!m) return false;
+          let mm = parseInt(m[1], 10); let yy = parseInt(m[2], 10);
+          if (mm < 1 || mm > 12) return false;
+          const fullYear = 2000 + yy;
+          const now = new Date();
+          const exp = new Date(fullYear, mm, 0, 23, 59, 59, 999);
+          return exp >= new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        }
+
+        // Mask: Card number
+        cardInput?.addEventListener('input', () => {
+          const raw = onlyDigits(cardInput.value).slice(0, 19);
+          const type = detectCardType(raw);
+          cardInput.value = formatCard(raw);
+          if (cvvInput) cvvInput.maxLength = type === 'amex' ? 4 : 3;
+          cardInput.setCustomValidity('');
+        });
+        cardInput?.addEventListener('blur', () => {
+          const digits = onlyDigits(cardInput.value);
+          if (!luhnCheck(digits)) {
+            cardInput.setCustomValidity('Número de cartão inválido.');
+          } else {
+            cardInput.setCustomValidity('');
+          }
+        });
+
+        // Mask: Expiration MM/AA
+        expInput?.addEventListener('input', () => {
+          const d = onlyDigits(expInput.value).slice(0, 4);
+          let out = d;
+          if (d.length >= 3) out = d.slice(0,2) + '/' + d.slice(2);
+          expInput.value = out;
+          expInput.setCustomValidity('');
+        });
+        expInput?.addEventListener('blur', () => {
+          if (!validateExp(expInput.value)) {
+            expInput.setCustomValidity('Data inválida (MM/AA) ou expirada.');
+          } else {
+            expInput.setCustomValidity('');
+          }
+        });
+
+        // Mask: CVV numeric, dependent length
+        cvvInput?.addEventListener('input', () => {
+          const type = detectCardType(onlyDigits(cardInput?.value || ''));
+          const max = type === 'amex' ? 4 : 3;
+          const d = onlyDigits(cvvInput.value).slice(0, max);
+          cvvInput.value = d;
+          if (d.length !== max) cvvInput.setCustomValidity('CVV inválido.'); else cvvInput.setCustomValidity('');
+        });
         form?.addEventListener('submit', (e) => {
           e.preventDefault();
           const btn = form.querySelector('button[type="submit"]');
           if (btn) btn.disabled = true;
+          if (!form.reportValidity()) { if (btn) btn.disabled = false; return; }
           note.textContent = 'Processando pagamento simulado...';
           setTimeout(() => {
             note.textContent = 'Pagamento aprovado! Bem-vindo ao NexUS.';

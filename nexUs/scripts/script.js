@@ -19,15 +19,82 @@
   }
 
   // Mobile nav toggle
+  let navBackdrop = null;
+  let focusTrapHandler = null;
+
+  function removeBackdrop() {
+    if (!navBackdrop) return;
+    navBackdrop.classList.remove('show');
+    const toRemove = navBackdrop;
+    navBackdrop = null;
+    setTimeout(() => { toRemove.remove(); }, 180);
+  }
+
   function closeNav() {
     if (!primaryNav) return;
-    primaryNav.classList.remove('open');
-    navToggle?.setAttribute('aria-expanded', 'false');
+    const end = () => {
+      primaryNav.classList.remove('closing');
+      navToggle?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      if (focusTrapHandler) { document.removeEventListener('keydown', focusTrapHandler); focusTrapHandler = null; }
+      removeBackdrop();
+    };
+    if (primaryNav.classList.contains('open')) {
+      primaryNav.classList.remove('open');
+      primaryNav.classList.add('closing');
+      const onEnd = (ev) => { if (ev.propertyName === 'transform') { primaryNav.removeEventListener('transitionend', onEnd); end(); } };
+      primaryNav.addEventListener('transitionend', onEnd);
+    } else {
+      end();
+    }
   }
   function openNav() {
     if (!primaryNav) return;
-    primaryNav.classList.add('open');
+    // backdrop
+    if (!navBackdrop) {
+      navBackdrop = document.createElement('div');
+      navBackdrop.className = 'nav-backdrop';
+      navBackdrop.addEventListener('click', closeNav);
+      document.body.appendChild(navBackdrop);
+      requestAnimationFrame(() => navBackdrop && navBackdrop.classList.add('show'));
+    }
+    // animate in
+    primaryNav.classList.add('opening');
     navToggle?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      primaryNav.classList.remove('opening');
+      primaryNav.classList.add('open');
+      // ensure close button exists inside overlay
+      let closeBtn = primaryNav.querySelector('.nav-close');
+      if (!(closeBtn instanceof HTMLElement)) {
+        closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'nav-close';
+        closeBtn.setAttribute('aria-label', 'Fechar menu');
+        closeBtn.textContent = '×';
+        closeBtn.addEventListener('click', closeNav);
+        primaryNav.insertBefore(closeBtn, primaryNav.firstChild);
+      }
+      // focus close button for a11y
+      closeBtn && closeBtn.focus();
+    });
+    // focus trap inside nav while open
+    focusTrapHandler = (e) => {
+      if (e.key !== 'Tab' || !primaryNav.classList.contains('open')) return;
+      const focusables = Array.from(primaryNav.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => el instanceof HTMLElement && !el.hasAttribute('disabled'));
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey) {
+        if (active === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (active === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', focusTrapHandler);
   }
   navToggle?.addEventListener('click', () => {
     const isOpen = primaryNav?.classList.contains('open');
@@ -41,6 +108,11 @@
   // Close on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeNav();
+  });
+
+  // Close menu if viewport switches to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 920) closeNav();
   });
 
   // Smooth scroll and focus management

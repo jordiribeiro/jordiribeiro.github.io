@@ -211,6 +211,60 @@ import {
   function clearList(listEl) { if (listEl) listEl.innerHTML = ''; }
   function escapeHtml(s) { return String(s).replace(/[&<>"]+/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+  // Minimal Markdown renderer (safe): supports paragraphs, lists, **bold**, `code`, ```code blocks```
+  function renderMarkdownToHtml(text) {
+    if (!text) return '';
+    const lines = String(text).split(/\r?\n/);
+    let html = '';
+    let inList = false;
+    let inCode = false;
+    let codeBuffer = [];
+
+    function closeList() { if (inList) { html += '</ul>'; inList = false; } }
+    function openList() { if (!inList) { html += '<ul>'; inList = true; } }
+    function closeCode() {
+      if (inCode) {
+        const code = escapeHtml(codeBuffer.join('\n'));
+        html += `<pre class="md-code"><code>${code}</code></pre>`;
+        codeBuffer = []; inCode = false;
+      }
+    }
+    function renderInline(md) {
+      let s = escapeHtml(md);
+      // inline code first
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // bold variations: **text**, ** text **, __text__
+      s = s.replace(/\*\*\s*([^*][^]*?)\s*\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/__\s*([^_][^]*?)\s*__/g, '<strong>$1</strong>');
+      // italics _text_ (avoid already-bold with __)
+      s = s.replace(/(^|[^_])_(.+?)_(?!_)/g, (m, pre, t) => pre + '<em>' + t + '</em>');
+      return s;
+    }
+
+    for (const raw of lines) {
+      const line = raw.replace(/\t/g, '    ');
+      // fenced code blocks
+      if (/^\s*```/.test(line)) { if (inCode) { closeCode(); } else { closeList(); inCode = true; codeBuffer = []; } continue; }
+      if (inCode) { codeBuffer.push(raw); continue; }
+
+      // lists (- or *)
+      const liMatch = line.match(/^\s*([*-])\s+(.*)$/);
+      if (liMatch) {
+        openList();
+        html += `<li>${renderInline(liMatch[2])}</li>`;
+        continue;
+      }
+      // blank line closes list
+      if (!line.trim()) { closeList(); html += ''; continue; }
+
+      // paragraph
+      closeList();
+      html += `<p>${renderInline(line)}</p>`;
+    }
+    closeList(); closeCode();
+    return html;
+  }
+
   // Retry helper for 429/5xx
   function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
   async function fetchWithRetry(url, options, attempts = 3, initialDelayMs = 800) {
@@ -377,32 +431,14 @@ import {
     if (!chatMessages) return;
     const wrap = document.createElement('div'); wrap.className = 'msg ' + role;
     const who = document.createElement('div'); who.className = 'role'; who.textContent = role === 'user' ? 'Você' : (role === 'assistant' ? 'Assistente' : 'Sistema');
-    const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = content;
-    const time = document.createElement('div'); time.className = 'time'; time.textContent = when.toLocaleString('pt-BR');
-    // pagination for long assistant responses
-    if (role === 'assistant' && content && content.length > 1200) {
-      const pageSize = 800;
-      const pages = [];
-      for (let i = 0; i < content.length; i += pageSize) pages.push(content.slice(i, i + pageSize));
-      let page = 0;
-      bubble.textContent = pages[page];
-      const pager = document.createElement('div'); pager.className = 'pager';
-      const prev = document.createElement('button'); prev.type = 'button'; prev.textContent = 'Anterior'; prev.disabled = true;
-      const next = document.createElement('button'); next.type = 'button'; next.textContent = 'Próximo';
-      const hint = document.createElement('span'); hint.className = 'hint'; hint.textContent = `Página ${page + 1} de ${pages.length}`;
-      function updatePager() {
-        bubble.textContent = pages[page];
-        prev.disabled = page === 0;
-        next.disabled = page === pages.length - 1;
-        hint.textContent = `Página ${page + 1} de ${pages.length}`;
-      }
-      prev.addEventListener('click', () => { if (page > 0) { page--; updatePager(); } });
-      next.addEventListener('click', () => { if (page < pages.length - 1) { page++; updatePager(); } });
-      pager.appendChild(prev); pager.appendChild(next); pager.appendChild(hint);
-      wrap.appendChild(who); wrap.appendChild(bubble); wrap.appendChild(time); wrap.appendChild(pager);
+    const bubble = document.createElement('div'); bubble.className = 'bubble';
+    if (role === 'assistant' || role === 'system') {
+      bubble.innerHTML = renderMarkdownToHtml(content);
     } else {
-      wrap.appendChild(who); wrap.appendChild(bubble); wrap.appendChild(time);
+      bubble.textContent = content;
     }
+    const time = document.createElement('div'); time.className = 'time'; time.textContent = when.toLocaleString('pt-BR');
+    wrap.appendChild(who); wrap.appendChild(bubble); wrap.appendChild(time);
     chatMessages.appendChild(wrap);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     conversation.push({ role, content }); if (conversation.length > 20) conversation.shift();
