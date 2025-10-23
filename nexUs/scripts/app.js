@@ -48,6 +48,7 @@ import {
   let unsubContacts = null;
   let unsubDeals = null;
   let unsubProfile = null;
+  let unsubChat = null;
   const contactsMap = new Map();
   const dealsMap = new Map();
 
@@ -56,11 +57,14 @@ import {
     if (unsubContacts) { unsubContacts(); unsubContacts = null; }
     if (unsubDeals) { unsubDeals(); unsubDeals = null; }
     if (unsubProfile) { unsubProfile(); unsubProfile = null; }
+    if (unsubChat) { unsubChat(); unsubChat = null; }
     if (!user) {
-      clearList(contactList);
-      clearList(dealList);
+      clearList(contactsTbody);
+      clearList(dealsTbody);
       setMetrics(0, 0, 0);
       setEligibility(null);
+      if (chatMessages) chatMessages.innerHTML = '';
+      conversation = [];
       return;
     }
     // subscribe contacts
@@ -97,6 +101,22 @@ import {
       fillProfileForm(data);
       setEligibility(data);
     });
+
+    // subscribe chat messages (chatMessages/{uid}/messages)
+    try {
+      const msgsQ = query(collection(db, 'chatMessages', user.uid, 'messages'), orderBy('createdAt', 'asc'));
+      unsubChat = onSnapshot(msgsQ, (snap) => {
+        if (chatMessages) chatMessages.innerHTML = '';
+        conversation = [];
+        snap.forEach((d) => {
+          const m = d.data();
+          const when = m?.createdAt?.seconds ? new Date(m.createdAt.seconds * 1000) : new Date();
+          appendMsg(m.role, m.content, when);
+        });
+      });
+    } catch (e) {
+      console.error('chat subscribe error', e);
+    }
   });
 
   contactForm?.addEventListener('submit', async (e) => {

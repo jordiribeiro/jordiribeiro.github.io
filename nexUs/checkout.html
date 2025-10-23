@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Finalizar assinatura NexUS." />
+    <title>NexUS — Checkout</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img src="assets/logo.svg" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text">NexUS</span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="plans.html">Planos</a></li>
+            <li><a href="members.html">Membros</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="checkout-title">
+      <div class="container">
+        <h1 id="checkout-title">Finalizar assinatura</h1>
+        <div class="checkout">
+          <div class="checkout-summary">
+            <h2 class="sr-only">Resumo do plano</h2>
+            <div class="summary-card">
+              <div class="summary-row">
+                <span>Plano</span><strong id="selectedPlan">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Preço</span><strong id="selectedPrice">—</strong>
+              </div>
+              <p class="muted" style="margin-top:0.5rem;">Sem fidelidade. Cancele quando quiser.</p>
+            </div>
+          </div>
+          <form class="checkout-form" id="checkoutForm">
+            <h2 class="sr-only">Dados de pagamento</h2>
+            <div class="grid-2">
+              <div class="field">
+                <label for="name">Nome completo</label>
+                <input id="name" name="name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="field">
+                <label for="card">Cartão</label>
+                <input id="card" name="card" inputmode="numeric" placeholder="0000 0000 0000 0000" autocomplete="cc-number" required />
+              </div>
+              <div class="field">
+                <label for="exp">Validade</label>
+                <input id="exp" name="exp" placeholder="MM/AA" autocomplete="cc-exp" required />
+              </div>
+              <div class="field">
+                <label for="cvv">CVV</label>
+                <input id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc" required />
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Pagar e assinar</button>
+              <a class="btn btn-ghost" href="plans.html">Voltar aos planos</a>
+            </div>
+            <p class="form-note" id="checkoutNote" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+
+    <script>
+      (function(){
+        const planEl = document.getElementById('selectedPlan');
+        const priceEl = document.getElementById('selectedPrice');
+        const form = document.getElementById('checkoutForm');
+        const note = document.getElementById('checkoutNote');
+        const params = new URLSearchParams(location.search);
+        const plan = (params.get('plan') || 'growth').toLowerCase();
+        const planMap = {
+          starter: { name: 'Starter', price: 'R$29/mês' },
+          growth: { name: 'Growth', price: 'R$59/mês' },
+          pro: { name: 'Pro', price: 'R$99/mês' }
+        };
+        const picked = planMap[plan] || planMap.growth;
+        if (planEl) planEl.textContent = picked.name;
+        if (priceEl) priceEl.textContent = picked.price;
+        form?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const btn = form.querySelector('button[type="submit"]');
+          if (btn) btn.disabled = true;
+          note.textContent = 'Processando pagamento simulado...';
+          setTimeout(() => {
+            note.textContent = 'Pagamento aprovado! Bem-vindo ao NexUS.';
+            // redireciona para a área de membros
+            setTimeout(() => { location.href = 'members.html'; }, 1200);
+          }, 900);
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+

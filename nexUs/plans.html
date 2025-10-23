@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Compare planos NexUS e escolha o ideal para você." />
+    <title>NexUS — Planos</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img src="assets/logo.svg" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text">NexUS</span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="index.html#sobre">Sobre</a></li>
+            <li><a href="index.html#beneficios">Benefícios</a></li>
+            <li><a href="index.html#mentorias">Mentorias</a></li>
+            <li><a href="plans.html" aria-current="page">Planos</a></li>
+            <li><a href="members.html">Membros</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
+            <li><a href="index.html#contato">Contato</a></li>
+          </ul>
+          <div class="nav-cta">
+            <a class="btn btn-outline" href="plans.html">Assinar</a>
+            <a class="btn btn-primary" href="checkout.html">Checkout</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="planos-title">
+      <div class="container">
+        <h1 id="planos-title">Compare os Planos</h1>
+        <p class="lead">Veja o que cada plano oferece e comece agora.</p>
+
+        <div class="table-wrap">
+          <table class="table table-compare" aria-label="Tabela comparativa de planos">
+            <caption class="sr-only">Comparação de recursos por plano</caption>
+            <thead>
+              <tr>
+                <th>Recursos</th>
+                <th id="starter">Starter</th>
+                <th id="growth">Growth</th>
+                <th id="pro">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Acesso à comunidade</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Conteúdos selecionados</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Eventos mensais</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Mentorias semanais</td>
+                <td class="cell-no">—</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Biblioteca premium</td>
+                <td class="cell-no">—</td>
+                <td class="cell-yes">✔</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Sessões 1:1 com mentores</td>
+                <td class="cell-no">—</td>
+                <td class="cell-no">—</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+              <tr>
+                <td>Parcerias exclusivas</td>
+                <td class="cell-no">—</td>
+                <td class="cell-no">—</td>
+                <td class="cell-yes">✔</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pricing grid-3" style="margin-top:1.5rem;">
+          <article class="price-card">
+            <h3 class="price-name">Starter</h3>
+            <p class="price-value"><span class="currency">R$</span>29<span class="period">/mês</span></p>
+            <button class="btn btn-outline full" data-plan="starter" type="button">Assinar Starter</button>
+          </article>
+          <article class="price-card highlight">
+            <div class="badge">Popular</div>
+            <h3 class="price-name">Growth</h3>
+            <p class="price-value"><span class="currency">R$</span>59<span class="period">/mês</span></p>
+            <button class="btn btn-primary full" data-plan="growth" type="button">Assinar Growth</button>
+          </article>
+          <article class="price-card">
+            <h3 class="price-name">Pro</h3>
+            <p class="price-value"><span class="currency">R$</span>99<span class="period">/mês</span></p>
+            <button class="btn btn-outline full" data-plan="pro" type="button">Assinar Pro</button>
+          </article>
+        </div>
+
+        <p class="muted" style="margin-top:0.75rem;">Sem fidelidade. Cancele quando quiser.</p>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+
+    <script>
+      (function(){
+        const buttons = document.querySelectorAll('[data-plan]');
+        const params = new URLSearchParams(location.search);
+        const target = (location.hash || '').replace('#','');
+        // if came from pricing with anchor, scroll to matching column id
+        if (target) {
+          const el = document.getElementById(target);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const plan = btn.getAttribute('data-plan') || 'growth';
+            const url = new URL('checkout.html', location.href);
+            url.searchParams.set('plan', plan);
+            location.href = url.toString();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+

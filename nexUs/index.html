@@ -64,7 +64,7 @@
             <li><a href="#contato">Contato</a></li>
           </ul>
           <div class="nav-cta">
-            <a class="btn btn-outline" href="#planos">Assinar</a>
+            <a class="btn btn-outline" href="plans.html">Assinar</a>
             <button class="btn btn-primary" id="openAuthBtn" type="button">Entrar</button>
           </div>
           <div class="user-menu" id="userMenu" hidden>
@@ -206,7 +206,7 @@
                 <li>Mentorias semanais</li>
                 <li>Biblioteca premium</li>
               </ul>
-              <a class="btn btn-primary full" href="#contato">Assinar</a>
+              <a class="btn btn-primary full" href="plans.html?from=pricing#growth">Assinar</a>
             </article>
             <article class="price-card">
               <h3 class="price-name">Pro</h3>
@@ -471,7 +471,8 @@
             </div>
             <div class="field">
               <label for="authPassword">Senha</label>
-              <input type="password" id="authPassword" name="password" required autocomplete="current-password" />
+              <input type="password" id="authPassword" name="password" required autocomplete="current-password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}" title="Mínimo 8 caracteres, incluindo letra minúscula, maiúscula e caractere especial." aria-describedby="passwordHint" />
+              <small class="form-note" id="passwordHint">Mínimo 8 caracteres, com minúscula, MAIÚSCULA e caractere especial.</small>
             </div>
             <div class="actions">
               <button class="btn btn-primary full" id="loginBtn" type="submit">Entrar</button>
