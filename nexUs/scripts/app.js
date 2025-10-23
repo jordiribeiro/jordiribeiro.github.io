@@ -49,6 +49,7 @@ import {
   let unsubDeals = null;
   let unsubProfile = null;
   let unsubChat = null;
+  let unsubTraining = null;
   const contactsMap = new Map();
   const dealsMap = new Map();
 
@@ -65,6 +66,9 @@ import {
       setEligibility(null);
       if (chatMessages) chatMessages.innerHTML = '';
       conversation = [];
+      if (unsubTraining) { unsubTraining(); unsubTraining = null; }
+      const grid = document.getElementById('trainingGrid'); if (grid) grid.innerHTML = '';
+      const cnt = document.getElementById('trainingCount'); if (cnt) cnt.textContent = '0/20';
       return;
     }
     // subscribe contacts
@@ -117,6 +121,31 @@ import {
     } catch (e) {
       console.error('chat subscribe error', e);
     }
+
+    // subscribe training videos (training/{uid}/videos)
+    try {
+      const vidsQ = query(collection(db, 'training', user.uid, 'videos'), orderBy('createdAt', 'desc'));
+      const grid = document.getElementById('trainingGrid');
+      const cnt = document.getElementById('trainingCount');
+      unsubTraining = onSnapshot(vidsQ, (snap) => {
+        if (grid) grid.innerHTML = '';
+        let n = 0;
+        snap.forEach((d) => {
+          const v = d.data(); n++;
+          const id = v?.id || '';
+          const cell = document.createElement('div');
+          cell.innerHTML = `
+            <div class="video-embed xs">
+              <iframe src="https://www.youtube.com/embed/${escapeHtml(id)}" title="Vídeo salvo" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div class="list-actions" style="margin-top:0.35rem;">
+              <button class="btn btn-ghost" data-action="del-video" data-id="${d.id}">Remover</button>
+            </div>`;
+          grid && grid.appendChild(cell);
+        });
+        cnt && (cnt.textContent = `${n}/20`);
+      });
+    } catch (e) { console.error('training subscribe error', e); }
   });
 
   contactForm?.addEventListener('submit', async (e) => {
@@ -366,6 +395,49 @@ import {
     if (!id) return;
     if (action === 'view') openCrmModal('contact', contactsMap.get(id));
     if (action === 'delete') await deleteDoc(doc(db, 'contacts', id));
+  });
+
+  // Training: add/remove videos
+  const trainingForm = document.getElementById('trainingForm');
+  const trainingUrl = document.getElementById('trainingUrl');
+  const trainingGrid = document.getElementById('trainingGrid');
+  function parseYouTubeId(input) {
+    const s = String(input || '').trim();
+    // direct id
+    if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+    // youtu.be/ID
+    const m1 = s.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+    if (m1) return m1[1];
+    // youtube.com/watch?v=ID
+    const m2 = s.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+    if (m2) return m2[1];
+    // embed/ID
+    const m3 = s.match(/embed\/([a-zA-Z0-9_-]{11})/);
+    if (m3) return m3[1];
+    return '';
+  }
+  trainingForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser; if (!user) return;
+    const id = parseYouTubeId(trainingUrl && trainingUrl.value);
+    if (!id) { alert('URL ou ID inválido.'); return; }
+    try {
+      // enforce limit 20
+      const vidsCol = collection(db, 'training', user.uid, 'videos');
+      const snap = await getDocs(vidsCol);
+      if (snap.size >= 20) { alert('Limite de 20 vídeos atingido.'); return; }
+      await addDoc(vidsCol, { id, createdAt: serverTimestamp(), uid: user.uid });
+      trainingUrl && (trainingUrl.value = '');
+    } catch (err) { console.error('add video error', err); alert('Erro ao salvar vídeo.'); }
+  });
+  trainingGrid?.addEventListener('click', async (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button[data-action="del-video"]') : null;
+    if (!btn) return;
+    const user = auth.currentUser; if (!user) return;
+    const id = btn.getAttribute('data-id'); if (!id) return;
+    try {
+      await deleteDoc(doc(db, 'training', user.uid, 'videos', id));
+    } catch (err) { console.error('delete video error', err); alert('Erro ao remover.'); }
   });
 
   // --- AI Chat (members.html) ---

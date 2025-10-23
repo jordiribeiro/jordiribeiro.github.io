@@ -229,6 +229,14 @@
               </div>
               <button class="carousel-btn next" type="button" aria-label="Próximo" data-next>›</button>
             </div>
+            <hr style="margin:1rem 0; border:0; border-top:1px solid var(--border);" />
+            <h3>Meus vídeos</h3>
+            <form id="trainingForm" class="cta-form" autocomplete="off">
+              <input type="text" id="trainingUrl" placeholder="URL ou ID do YouTube (ex.: https://youtu.be/...)" required />
+              <button class="btn btn-primary" type="submit">Adicionar</button>
+            </form>
+            <p class="form-note">Você pode salvar até <strong>20</strong> vídeos. <span id="trainingCount">0/20</span></p>
+            <div id="trainingGrid" class="grid-3" style="margin-top:0.5rem;"></div>
           </section>
 
           <section id="tab-ia" role="tabpanel" aria-labelledby="tab-ia-tab" class="tab-panel" hidden tabindex="0">
