@@ -88,8 +88,9 @@ import {
             const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
             const ref = doc(db, 'profiles', user.uid);
             const snap = await getDoc(ref);
-            const url = (snap.exists() && snap.data()?.photoURL) || '';
-            userAvatar.src = url || DEFAULT_AVATAR;
+            const data = snap.exists() ? snap.data() : null;
+            const picture = (data && (data.photoData || data.photoURL)) || '';
+            userAvatar.src = picture || DEFAULT_AVATAR;
           } catch {
             userAvatar.src = DEFAULT_AVATAR;
           }

@@ -5,12 +5,13 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.4.0/firebas
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js';
 import { getAnalytics, isSupported } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
+import { getStorage } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js';
 
 export const firebaseConfig = {
   apiKey: 'AIzaSyBh10Uz8cpf_QZOK5z3rNFbomceh4EM-fM',
   authDomain: 'nexus-ac6fd.firebaseapp.com',
   projectId: 'nexus-ac6fd',
-  storageBucket: 'nexus-ac6fd.firebasestorage.app',
+  storageBucket: 'nexus-ac6fd.appspot.com',
   messagingSenderId: '216685400293',
   appId: '1:216685400293:web:a5dbbf3f1c4e783986c40c',
   measurementId: 'G-H17ZHW0DRK',
@@ -19,6 +20,7 @@ export const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 // Initialize Analytics only if supported (prevents errors on unsupported environments like some browsers)
 export let analytics;
