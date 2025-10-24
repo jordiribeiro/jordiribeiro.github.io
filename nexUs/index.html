@@ -73,7 +73,7 @@
                 <span id="notifBadgeAvatar" class="badge avatar-badge" hidden>0</span>
               </button>
               <div class="dropdown" id="userDropdown" hidden role="menu" aria-label="Menu do usuário">
-                <a class="menu-item" href="members.html#notif">🔔 Notificações <span id="notifBadge" class="badge" hidden>0</span></a>
+                <button class="menu-item" id="openNotifFromDropdown" type="button">🔔 Notificações <span id="notifBadge" class="badge" hidden>0</span></button>
                 <a class="menu-item" href="profile.html">👤 Perfil</a>
               </div>
             </div>
@@ -392,6 +392,21 @@
         </div>
       </section>
     </main>
+
+    <!-- Notifications modal (global) -->
+    <div class="modal" id="notifModal" role="dialog" aria-modal="true" aria-labelledby="notifTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="notifClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="notifTitle">Notificações</h2>
+          <p class="muted">Pedidos de amizade e mensagens.</p>
+        </div>
+        <div class="modal-body">
+          <ul id="notifList" class="list notif-list"></ul>
+        </div>
+      </div>
+    </div>
 
     <!-- CRM Modal -->
     <div class="modal" id="crmModal" role="dialog" aria-modal="true" aria-labelledby="crmType" hidden>

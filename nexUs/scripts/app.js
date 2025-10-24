@@ -158,17 +158,20 @@ import {
         snap.forEach((d) => {
           const n = d.data();
           if (!n.read) unread++;
+          const when = n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000).toLocaleString('pt-BR') : '';
           const li = document.createElement('li');
           if (n.type === 'friend_request') {
             li.innerHTML = `<span><strong>${escapeHtml(n.fromName || 'Alguém')}</strong> quer se conectar.</span>
             <span class="list-actions">
+              <span class="time">${escapeHtml(when)}</span>
               <button class="btn btn-primary" data-action="notif-accept" data-id="${d.id}" data-from="${escapeHtml(n.from)}">Aceitar</button>
               <button class="btn btn-ghost" data-action="notif-decline" data-id="${d.id}">Recusar</button>
             </span>`;
           } else if (n.type === 'message') {
-            li.innerHTML = `<span>Nova mensagem de <strong>${escapeHtml(n.fromName || 'Contato')}</strong></span>`;
+            li.innerHTML = `<span>Nova mensagem de <strong>${escapeHtml(n.fromName || 'Contato')}</strong></span>
+            <span class="list-actions"><span class="time">${escapeHtml(when)}</span></span>`;
           } else {
-            li.textContent = n.text || 'Notificação';
+            li.innerHTML = `<span>${escapeHtml(n.text || 'Notificação')}</span><span class="list-actions"><span class="time">${escapeHtml(when)}</span></span>`;
           }
           notifList && notifList.appendChild(li);
         });

@@ -2,6 +2,7 @@
 // Steps: add your Firebase config in scripts/firebase-config.js
 
 import { app, auth, db } from './firebase-config.js';
+import { collection, query, where, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
 import {
   browserLocalPersistence,
   setPersistence,
@@ -29,6 +30,12 @@ import {
   const logoutBtn = document.getElementById('logoutBtn');
   const membersSection = document.querySelector('[data-members-only]');
   const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="%23e5e7eb"/><circle cx="64" cy="48" r="24" fill="%239ca3af"/><rect x="24" y="80" width="80" height="32" rx="16" fill="%239ca3af"/></svg>';
+  // Notifications (global)
+  const notifModal = document.getElementById('notifModal');
+  const notifList = document.getElementById('notifList');
+  const notifBadge = document.getElementById('notifBadge');
+  const notifBadgeAvatar = document.getElementById('notifBadgeAvatar');
+  let unsubNotifs = null;
 
   // Helpers modal
   function openModal() {
@@ -119,6 +126,64 @@ import {
     if (!user && onMembersPage) {
       window.location.replace('index.html?auth=1');
     }
+
+    // Subscribe notifications on any page that has notif UI
+    if (unsubNotifs) { unsubNotifs(); unsubNotifs = null; }
+    if (user && notifList) {
+      try {
+        unsubNotifs = onSnapshot(query(collection(db, 'notifications'), where('to', '==', user.uid)), (snap) => {
+          if (notifList) notifList.innerHTML = '';
+          let unread = 0;
+          snap.forEach((d) => {
+            const n = d.data();
+            if (!n.read) unread++;
+            const when = n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000).toLocaleString('pt-BR') : '';
+            const li = document.createElement('li');
+            if (n.type === 'friend_request') {
+              li.innerHTML = `<span><strong>${(n.fromName || 'Alguém')}</strong> quer se conectar.</span>
+              <span class="list-actions">
+                <span class="time">${when}</span>
+                <button class="btn btn-primary" data-action="notif-accept" data-id="${d.id}" data-from="${n.from}">Aceitar</button>
+                <button class="btn btn-ghost" data-action="notif-decline" data-id="${d.id}">Recusar</button>
+              </span>`;
+            } else if (n.type === 'message') {
+              li.innerHTML = `<span>Nova mensagem de <strong>${(n.fromName || 'Contato')}</strong></span>
+              <span class="list-actions"><span class="time">${when}</span></span>`;
+            } else {
+              li.innerHTML = `<span>${(n.text || 'Notificação')}</span><span class="list-actions"><span class="time">${when}</span></span>`;
+            }
+            notifList && notifList.appendChild(li);
+          });
+          if (notifBadge) { notifBadge.textContent = String(unread); notifBadge.hidden = unread <= 0; }
+          if (notifBadgeAvatar) { notifBadgeAvatar.textContent = String(unread); notifBadgeAvatar.hidden = unread <= 0; }
+        });
+      } catch {}
+    }
+  });
+
+  // Handle accept/decline from notifications on any page
+  document.addEventListener('click', async (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button[data-action]') : null;
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const id = btn.getAttribute('data-id');
+    const user = auth.currentUser;
+    if (!user || !action) return;
+    try {
+      if (action === 'notif-accept' && id) {
+        const from = btn.getAttribute('data-from') || '';
+        if (from) {
+          await Promise.all([
+            addDoc(collection(db, 'friends'), { owner: user.uid, friendId: from, createdAt: serverTimestamp() }),
+            addDoc(collection(db, 'friends'), { owner: from, friendId: user.uid, createdAt: serverTimestamp() })
+          ]);
+        }
+        await deleteDoc(doc(db, 'notifications', id));
+      }
+      if (action === 'notif-decline' && id) {
+        await deleteDoc(doc(db, 'notifications', id));
+      }
+    } catch {}
   });
 
   // Form actions

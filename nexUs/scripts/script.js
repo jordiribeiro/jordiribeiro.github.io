@@ -64,6 +64,25 @@
     if (!inside) closeUserDropdownDelegated();
   });
 
+  // Global notifications modal open/close (works on any page that includes the modal markup)
+  const notifModal = document.getElementById('notifModal');
+  const notifClose = document.getElementById('notifClose');
+  const openNotifFromDropdown = document.getElementById('openNotifFromDropdown');
+  function openNotifModal() {
+    if (!notifModal) return;
+    notifModal.hidden = false; document.body.style.overflow = 'hidden';
+  }
+  function closeNotifModal() {
+    if (!notifModal) return;
+    notifModal.hidden = true; document.body.style.overflow = '';
+  }
+  openNotifFromDropdown?.addEventListener('click', (e) => { e.preventDefault(); closeUserDropdownDelegated(); openNotifModal(); });
+  notifClose?.addEventListener('click', closeNotifModal);
+  notifModal?.addEventListener('click', (e) => {
+    const t = e.target;
+    if (t instanceof HTMLElement && t.dataset.close === 'true') closeNotifModal();
+  });
+
   // Adjust body offset for fixed header to avoid content jump/overlap
   function adjustHeaderOffset() {
     const header = siteHeader instanceof HTMLElement ? siteHeader : null;
