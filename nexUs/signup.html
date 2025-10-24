@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NexUS — Cadastro</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
+    <script type="module" src="scripts/signup.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img class="brand-logo" src="assets/nexUs.png" data-svg="assets/nexUs.png" data-png="assets/nexUs.png" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text"></span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="index.html#sobre">Sobre</a></li>
+            <li><a href="index.html#beneficios">Benefícios</a></li>
+            <li><a href="plans.html">Planos</a></li>
+          </ul>
+          <div class="user-menu" id="userMenu" hidden>
+            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
+              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+            </a>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="signup-title">
+      <div class="container" style="max-width:640px;">
+        <h1 id="signup-title">Crie sua conta</h1>
+        <p class="muted">Junte-se ao NexUS para se conectar e crescer.</p>
+        <form id="signupForm" class="profile-form" novalidate>
+          <div class="field">
+            <label for="suEmail">Email</label>
+            <input id="suEmail" type="email" name="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="suPassword">Senha</label>
+            <input id="suPassword" type="password" name="password" autocomplete="new-password" required />
+          </div>
+          <div class="field">
+            <label for="suName">Nome</label>
+            <input id="suName" type="text" name="name" placeholder="Seu nome" />
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Cadastrar</button>
+            <a class="btn btn-ghost" href="index.html?auth=1">Já tenho conta</a>
+          </div>
+          <p class="form-note" id="signupNote" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

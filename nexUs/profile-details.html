@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NexUS — Perfil do Membro</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
+    <script type="module" src="scripts/profile-details.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img class="brand-logo" src="assets/NexUs -U.jpg" data-svg="assets/nexUs.png" data-png="assets/nexUs.png" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text"></span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="members.html">Membros</a></li>
+          </ul>
+          <div class="user-menu" id="userMenu" hidden>
+            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
+              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+            </a>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="pd-title">
+      <div class="container" style="max-width:780px;">
+        <h1 id="pd-title">Perfil</h1>
+        <div class="card" style="padding:1rem; border:1px solid var(--border); border-radius: var(--radius-l); display:grid; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <div class="avatar" style="width:96px; height:96px;">
+              <img id="pdAvatar" alt="Foto de perfil" width="96" height="96" />
+            </div>
+            <div>
+              <h2 id="pdName" style="margin:0;">—</h2>
+              <p id="pdCompany" class="muted" style="margin:0;">—</p>
+              <p id="pdSite" style="margin:0.25rem 0 0;"><a id="pdSiteLink" href="#" target="_blank" rel="noopener">—</a></p>
+            </div>
+          </div>
+          <div>
+            <h3>Sobre</h3>
+            <p id="pdBio" class="muted">—</p>
+          </div>
+          <div>
+            <h3>Empresa</h3>
+            <ul class="list" style="padding:0;">
+              <li><strong>Porte:</strong> <span id="pdType">—</span></li>
+              <li><strong>Faturamento:</strong> <span id="pdRevenue">—</span></li>
+              <li><strong>Início:</strong> <span id="pdStartedAt">—</span></li>
+              <li><strong>CNPJ:</strong> <span id="pdCnpj">—</span></li>
+            </ul>
+          </div>
+          <div class="actions pd-actions" style="margin-top:0.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="pdConnect" type="button" hidden>Conectar</button>
+            <button class="btn btn-outline" id="pdRemove" type="button" hidden>Remover</button>
+            <a class="btn btn-ghost" id="pdBack" href="members.html#tab-conectar">Voltar</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

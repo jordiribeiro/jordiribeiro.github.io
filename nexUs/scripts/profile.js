@@ -12,6 +12,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/fi
   const pfAvatarRemove = document.getElementById('pfAvatarRemove');
   const pfAvatarPreview = document.getElementById('pfAvatarPreview');
   const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="%23e5e7eb"/><circle cx="64" cy="48" r="24" fill="%239ca3af"/><rect x="24" y="80" width="80" height="32" rx="16" fill="%239ca3af"/></svg>';
+  // Delete account modal (elements will be fetched after DOM is ready)
 
   // Helper: resize and encode image into compact data URL to store in Firestore
   async function fileToDataUrlResized(file, maxSize = 360, preferredMime = 'image/webp', quality = 0.85) {
@@ -71,6 +72,58 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/fi
       if (userAvatar instanceof HTMLImageElement) userAvatar.src = data.photoData || data.photoURL || DEFAULT_AVATAR;
     } catch {}
   });
+
+  // Delete account modal handlers
+  function openDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    const note = document.getElementById('deleteNote');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (note) note.textContent = '';
+  }
+  function attachDeleteHandlers() {
+    const deleteBtn = document.getElementById('deleteAccountBtn');
+    const deleteClose = document.getElementById('deleteClose');
+    const deleteCancel = document.getElementById('deleteCancel');
+    const deleteConfirm = document.getElementById('deleteConfirm');
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteNote = document.getElementById('deleteNote');
+    deleteBtn && deleteBtn.addEventListener('click', openDeleteModal);
+    deleteClose && deleteClose.addEventListener('click', closeDeleteModal);
+    deleteCancel && deleteCancel.addEventListener('click', closeDeleteModal);
+    deleteModal && deleteModal.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t instanceof HTMLElement && t.dataset.close === 'true') closeDeleteModal();
+    });
+    deleteConfirm && deleteConfirm.addEventListener('click', async () => {
+      const user = auth.currentUser; if (!user) return;
+      const btn = deleteConfirm;
+      btn.disabled = true;
+      try {
+        const { deleteUser } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js');
+        await deleteUser(user);
+        if (deleteNote) deleteNote.textContent = 'Conta excluída.';
+        setTimeout(() => { location.href = 'index.html'; }, 800);
+      } catch (err) {
+        console.error('delete account error', err);
+        if (deleteNote) deleteNote.textContent = 'Erro ao excluir. Faça login novamente e tente de novo.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachDeleteHandlers);
+  } else {
+    attachDeleteHandlers();
+  }
 
   pfAvatarFile?.addEventListener('change', () => {
     const file = pfAvatarFile.files && pfAvatarFile.files[0];

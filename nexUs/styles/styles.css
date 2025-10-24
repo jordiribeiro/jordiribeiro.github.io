@@ -137,6 +137,13 @@ html.authed .user-menu { display: inline-flex; }
 .user-email { color: var(--muted); font-size: 0.95rem; }
 .avatar { display: inline-flex; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-wrap { position: relative; display: inline-block; }
+.dropdown { position: absolute; top: calc(100% + 6px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 0.35rem; display: grid; gap: 0.25rem; z-index: 80; }
+.dropdown[hidden] { display: none !important; }
+.menu-item { display: inline-flex; align-items: center; gap: 0.35rem; background: transparent; border: 0; padding: 0.45rem 0.55rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text); font-size: 0.9rem; }
+.menu-item:hover { background: color-mix(in oklab, var(--surface), transparent 45%); }
+/* Notification count on avatar */
+.avatar-badge { position: absolute; bottom: -2px; right: -2px; transform: translate(0, 0); min-width: 16px; height: 16px; line-height: 16px; padding: 0 4px; font-size: 11px; }
 
 .nav-toggle { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; border: 1px solid var(--border); background: transparent; border-radius: 10px; cursor: pointer; }
 .nav-toggle .bar { height: 2px; width: 22px; background: var(--text); border-radius: 2px; margin-inline: auto; }
@@ -197,6 +204,9 @@ html.authed .user-menu { display: inline-flex; }
   .site-header .nav-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); margin: 0; }
   /* Reserva espaço à direita para não sobrepor o conteúdo */
   .site-header .header-top-left > .container { padding-right: 56px; }
+  /* Espaço extra entre avatar e botão de menu no mobile */
+  .site-header .primary-nav { padding-right: 56px; }
+  .site-header .user-menu { margin-right: 8px; }
 }
 
 /* Prevent logo/menu overlap on tighter desktop widths */
@@ -327,6 +337,8 @@ section { scroll-margin-top: 88px; }
 .field select { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.55rem 0.7rem; }
 .profile-form .actions { margin-top: 0.5rem; }
 .actions { display: grid; gap: 0.5rem; margin-top: 0.25rem; }
+/* Profile details actions layout */
+.pd-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
 
 /* Tabs & member app */
 .tabs { display: inline-flex; gap: 0.5rem; border-bottom: 1px solid var(--border); margin: 0.5rem 0 1rem; }
@@ -336,6 +348,8 @@ section { scroll-margin-top: 88px; }
 .list { list-style: none; padding: 0; margin-top: 0.75rem; display: grid; gap: 0.5rem; }
 .list li { display: flex; justify-content: space-between; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 0.6rem 0.75rem; gap: 0.5rem; }
 .list-actions { display: inline-flex; gap: 0.25rem; }
+.badge { display: inline-block; min-width: 18px; padding: 0 6px; height: 18px; border-radius: 999px; background: var(--danger); color: #fff; font-size: 12px; text-align: center; line-height: 18px; margin-left: 4px; }
+.notif-list .list-actions .btn { padding: 0.3rem 0.5rem; }
 
 /* Tables */
 .table-wrap { width: 100%; overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--bg); }
@@ -374,10 +388,22 @@ section { scroll-margin-top: 88px; }
 .chat-messages { padding: 0.75rem; overflow: auto; display: grid; gap: 0.5rem; align-content: start; }
 .chat-input-row { display: flex; gap: 0.5rem; padding: 0.5rem; border-top: 1px solid var(--border); }
 .chat-input-row input { flex: 1; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.65rem 0.8rem; }
+.dm-chat { display: grid; grid-template-rows: minmax(300px, 55vh) auto auto; gap: 0.25rem; }
+.emoji-panel { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.25rem; padding: 0.25rem; border-top: 1px solid var(--border); }
+.emoji { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 0.35rem; cursor: pointer; font-size: 1.1rem; }
+@media (min-width: 720px) {
+  .modal-dialog { width: min(720px, calc(100% - 2rem)); }
+  .dm-chat { grid-template-rows: minmax(380px, 60vh) auto auto; }
+}
+@media (min-width: 1024px) {
+  .modal-dialog { width: min(900px, calc(100% - 4rem)); }
+  .dm-chat { grid-template-rows: minmax(480px, 70vh) auto auto; }
+}
 .msg { display: grid; gap: 0.25rem; }
 .msg .role { font-size: 0.85rem; color: var(--muted); }
 .msg .bubble { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 0.6rem 0.75rem; }
 .msg .bubble { white-space: pre-wrap; word-wrap: break-word; }
+.msg .bubble.deleted { font-style: italic; color: var(--muted); }
 .msg.user .bubble { background: color-mix(in oklab, var(--brand-500), var(--surface) 85%); color: var(--text); }
 .msg .time { font-size: 0.75rem; color: var(--muted); }
 

@@ -144,21 +144,8 @@ import {
   });
 
   registerBtn?.addEventListener('click', async () => {
-    if (!authForm) return;
-    const data = new FormData(authForm);
-    const email = String(data.get('email') || '').trim();
-    const password = String(data.get('password') || '');
-    if (!email || !password) {
-      authNote && (authNote.textContent = 'Preencha email e senha.');
-      return;
-    }
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      authNote && (authNote.textContent = 'Conta criada! Você já está logado.');
-      setTimeout(closeModal, 600);
-    } catch (err) {
-      authNote && (authNote.textContent = mapFirebaseError(err));
-    }
+    // Redireciona para a página de cadastro dedicada
+    window.location.href = 'signup.html';
   });
 
   logoutBtn?.addEventListener('click', async () => {

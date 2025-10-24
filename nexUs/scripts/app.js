@@ -44,12 +44,61 @@ import {
   const metricContacts = document.getElementById('metricContacts');
   const metricDeals = document.getElementById('metricDeals');
   const metricPipeline = document.getElementById('metricPipeline');
+  const metricFriends = document.getElementById('metricFriends');
+  const userAvatarBtn = document.getElementById('userAvatarBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  const openNotifFromDropdown = document.getElementById('openNotifFromDropdown');
+  const notifModal = document.getElementById('notifModal');
+  const notifClose = document.getElementById('notifClose');
+  const notifList = document.getElementById('notifList');
+  const notifBadge = document.getElementById('notifBadge');
 
   let unsubContacts = null;
   let unsubDeals = null;
   let unsubProfile = null;
   let unsubChat = null;
   let unsubTraining = null;
+  let unsubFriends = null;
+  let unsubProfiles = null;
+  let unsubDm = null;
+  let currentDm = { friendId: null };
+  let unsubNotifs = null;
+  let unsubPendingFrom = null;
+  async function markNotificationsRead() {
+    const user = auth.currentUser; if (!user) return;
+    try {
+      const qn = query(collection(db, 'notifications'), where('to', '==', user.uid), where('read', '==', false));
+      const snap = await getDocs(qn);
+      const ops = [];
+      snap.forEach((d) => ops.push(updateDoc(doc(db, 'notifications', d.id), { read: true })));
+      await Promise.all(ops);
+    } catch (e) { console.error('markNotificationsRead error', e); }
+  }
+  function openNotif() {
+    if (!notifModal) return;
+    notifModal.hidden = false; document.body.style.overflow = 'hidden';
+    markNotificationsRead().then(() => { if (notifBadge) notifBadge.hidden = true; });
+  }
+  function closeNotif() {
+    if (!notifModal) return; notifModal.hidden = true; document.body.style.overflow = '';
+  }
+  openNotifFromDropdown?.addEventListener('click', () => { closeUserDropdown(); openNotif(); });
+  notifClose?.addEventListener('click', closeNotif);
+  notifModal?.addEventListener('click', (e) => { const t = e.target; if (t instanceof HTMLElement && t.dataset.close === 'true') closeNotif(); });
+
+  function toggleUserDropdown() {
+    if (!userDropdown || !userAvatarBtn) return;
+    const willOpen = userDropdown.hidden;
+    userDropdown.hidden = !willOpen;
+    userAvatarBtn.setAttribute('aria-expanded', String(willOpen));
+  }
+  function closeUserDropdown() { if (userDropdown && !userDropdown.hidden) { userDropdown.hidden = true; userAvatarBtn?.setAttribute('aria-expanded', 'false'); } }
+  userAvatarBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleUserDropdown(); });
+  document.addEventListener('click', (e) => {
+    if (!userDropdown || userDropdown.hidden) return;
+    const inside = e.target instanceof HTMLElement && (e.target.closest('#userDropdown') || e.target.closest('#userAvatarBtn'));
+    if (!inside) closeUserDropdown();
+  });
   const contactsMap = new Map();
   const dealsMap = new Map();
 
@@ -67,10 +116,96 @@ import {
       if (chatMessages) chatMessages.innerHTML = '';
       conversation = [];
       if (unsubTraining) { unsubTraining(); unsubTraining = null; }
+      if (unsubFriends) { unsubFriends(); unsubFriends = null; }
+      if (unsubProfiles) { unsubProfiles(); unsubProfiles = null; }
+      const friendsList = document.getElementById('friendsList'); if (friendsList) friendsList.innerHTML = '';
+      const connectList = document.getElementById('connectList'); if (connectList) connectList.innerHTML = '';
+      if (unsubDm) { unsubDm(); unsubDm = null; }
+      if (unsubNotifs) { unsubNotifs(); unsubNotifs = null; }
+      if (unsubPendingFrom) { unsubPendingFrom(); unsubPendingFrom = null; }
+      currentDm = { friendId: null };
       const grid = document.getElementById('trainingGrid'); if (grid) grid.innerHTML = '';
       const cnt = document.getElementById('trainingCount'); if (cnt) cnt.textContent = '0/20';
       return;
     }
+    // subscribe friends list (friends where owner == uid)
+    try {
+      const friendsList = document.getElementById('friendsList');
+      const qf = query(collection(db, 'friends'), where('owner', '==', user.uid));
+      unsubFriends = onSnapshot(qf, async (snap) => {
+        if (friendsList) friendsList.innerHTML = '';
+        const ids = [];
+        snap.forEach(d => { const v = d.data(); if (v && v.friendId) ids.push(v.friendId); });
+        if (metricFriends) metricFriends.textContent = String(ids.length);
+        // map ids -> profiles
+        for (const fid of ids) {
+          const pdoc = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js').then(m => m.getDoc(m.doc(db, 'profiles', fid)));
+          const pdata = pdoc.exists() ? pdoc.data() : {};
+          const li = document.createElement('li');
+          li.innerHTML = `<span style="display:flex; align-items:center; gap:0.5rem;"><img alt="" src="${escapeHtml(pdata.photoData || pdata.photoURL || '')}" style="width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);" onerror="this.style.display='none'"/><strong>${escapeHtml(pdata.displayName || pdata.company || 'Membro')}</strong></span>
+          <span class="list-actions"><button class="btn btn-primary" data-action="open-dm" data-id="${fid}" data-name="${escapeHtml(pdata.displayName || pdata.company || 'Membro')}">Chat</button><a class="btn btn-ghost" href="profile-details.html?uid=${fid}">Ver</a><button class="btn btn-ghost" data-action="remove-friend" data-id="${fid}">Remover</button></span>`;
+          friendsList && friendsList.appendChild(li);
+        }
+      });
+    } catch (e) { console.error('friends subscribe error', e); }
+
+    // subscribe connect list (all profiles except me)
+    // subscribe notifications (friend requests + new messages)
+    try {
+      unsubNotifs = onSnapshot(query(collection(db, 'notifications'), where('to', '==', user.uid)), (snap) => {
+        if (notifList) notifList.innerHTML = '';
+        let unread = 0;
+        snap.forEach((d) => {
+          const n = d.data();
+          if (!n.read) unread++;
+          const li = document.createElement('li');
+          if (n.type === 'friend_request') {
+            li.innerHTML = `<span><strong>${escapeHtml(n.fromName || 'Alguém')}</strong> quer se conectar.</span>
+            <span class="list-actions">
+              <button class="btn btn-primary" data-action="notif-accept" data-id="${d.id}" data-from="${escapeHtml(n.from)}">Aceitar</button>
+              <button class="btn btn-ghost" data-action="notif-decline" data-id="${d.id}">Recusar</button>
+            </span>`;
+          } else if (n.type === 'message') {
+            li.innerHTML = `<span>Nova mensagem de <strong>${escapeHtml(n.fromName || 'Contato')}</strong></span>`;
+          } else {
+            li.textContent = n.text || 'Notificação';
+          }
+          notifList && notifList.appendChild(li);
+        });
+        if (notifBadge) { notifBadge.textContent = String(unread); notifBadge.hidden = unread <= 0; }
+        const avatarBadge = document.getElementById('notifBadgeAvatar');
+        if (avatarBadge) { avatarBadge.textContent = String(unread); avatarBadge.hidden = unread <= 0; }
+      });
+    } catch (e) { console.error('notifications subscribe error', e); }
+
+    // subscribe pending friend-requests I sent (to live-refresh connect buttons)
+    try {
+      const qPendingFrom = query(collection(db, 'notifications'), where('from', '==', user.uid), where('type', '==', 'friend_request'));
+      unsubPendingFrom = onSnapshot(qPendingFrom, () => { refreshConnectButtons(); });
+    } catch (e) { console.error('pending-from subscribe error', e); }
+    try {
+      const connectList = document.getElementById('connectList');
+      const qp = query(collection(db, 'profiles'));
+      unsubProfiles = onSnapshot(qp, async (snap) => {
+        if (connectList) connectList.innerHTML = '';
+        // pending friend requests I sent
+        const pendingTo = await getDocs(query(collection(db, 'notifications'), where('from', '==', user.uid), where('type', '==', 'friend_request')));
+        const pendingIds = new Set(); pendingTo.forEach(d2 => { const v = d2.data(); if (v && v.to) pendingIds.add(String(v.to)); });
+        // accepted friends
+        const friendsSnap = await getDocs(query(collection(db, 'friends'), where('owner', '==', user.uid)));
+        const friendIds = new Set(); friendsSnap.forEach(docu => { const v = docu.data(); if (v && v.friendId) friendIds.add(String(v.friendId)); });
+        snap.forEach((d) => {
+          if (d.id === user.uid) return;
+          const v = d.data();
+          const isFriend = friendIds.has(d.id);
+          const isPending = pendingIds.has(d.id);
+          const li = document.createElement('li');
+          li.innerHTML = `<span style=\"display:flex; align-items:center; gap:0.5rem;\"><img alt=\"\" src=\"${escapeHtml(v.photoData || v.photoURL || '')}\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);\" onerror=\"this.style.display='none'\"/><strong>${escapeHtml(v.displayName || v.company || 'Membro')}</strong></span>
+          <span class=\"list-actions\"><a class=\"btn btn-ghost\" href=\"profile-details.html?uid=${d.id}\">Ver</a><button class=\"btn ${isFriend ? 'btn-outline' : (isPending ? 'btn-outline' : 'btn-primary')}\" data-action=\"add-friend\" data-id=\"${d.id}\" ${isFriend ? 'disabled' : (isPending ? 'disabled' : '')}>${isFriend ? 'Conectado' : (isPending ? 'Solicitação enviada' : 'Conectar')}</button></span>`;
+          connectList && connectList.appendChild(li);
+        });
+      });
+    } catch (e) { console.error('profiles subscribe error', e); }
     // subscribe contacts
     unsubContacts = bindList(
       collection(db, 'contacts'),
@@ -235,6 +370,27 @@ import {
     if (contacts != null && metricContacts) metricContacts.textContent = String(contacts);
     if (deals != null && metricDeals) metricDeals.textContent = String(deals);
     if (pipeline != null && metricPipeline) metricPipeline.textContent = `R$ ${Number(pipeline).toLocaleString('pt-BR')}`;
+  }
+
+  // Refresh connect buttons state based on current friends (AJAX-like update)
+  async function refreshConnectButtons() {
+    try {
+      const user = auth.currentUser; if (!user) return;
+      const connectList = document.getElementById('connectList'); if (!connectList) return;
+      const friendsSnap = await getDocs(query(collection(db, 'friends'), where('owner', '==', user.uid)));
+      const friendIds = new Set();
+      friendsSnap.forEach(d => { const v = d.data(); if (v && v.friendId) friendIds.add(String(v.friendId)); });
+      const buttons = connectList.querySelectorAll('button[data-action="add-friend"][data-id]');
+      buttons.forEach((btn) => {
+        if (!(btn instanceof HTMLButtonElement)) return;
+        const id = btn.getAttribute('data-id') || '';
+        const isFriend = friendIds.has(id);
+        btn.textContent = isFriend ? 'Conectado' : 'Conectar';
+        btn.classList.toggle('btn-primary', !isFriend);
+        btn.classList.toggle('btn-outline', isFriend);
+        btn.disabled = isFriend;
+      });
+    } catch (e) { console.error('refreshConnectButtons error', e); }
   }
 
   function clearList(listEl) { if (listEl) listEl.innerHTML = ''; }
@@ -536,6 +692,183 @@ import {
     if (!id) return;
     if (action === 'view') openCrmModal('deal', dealsMap.get(id));
     if (action === 'delete') await deleteDoc(doc(db, 'deals', id));
+  });
+
+  // Friends/connect actions
+  document.addEventListener('click', async (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button[data-action]') : null;
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const id = btn.getAttribute('data-id');
+    const user = auth.currentUser;
+    if (!user || !action) return;
+    try {
+      if (action === 'add-friend') {
+        // send friend request notification to target user
+        const prof = await getDocs(query(collection(db, 'profiles'), where('__name__', '==', user.uid)));
+        let fromName = 'Membro'; prof.forEach(d => { const v = d.data(); if (v && v.displayName) fromName = v.displayName; });
+        await addDoc(collection(db, 'notifications'), { type: 'friend_request', from: user.uid, fromName, to: id, createdAt: serverTimestamp(), read: false });
+        btn.textContent = 'Solicitado'; btn.setAttribute('disabled', 'true');
+        await refreshConnectButtons();
+      }
+      if (action === 'remove-friend') {
+        // remove both directions
+        const qfA = query(collection(db, 'friends'), where('owner', '==', user.uid), where('friendId', '==', id));
+        const qfB = query(collection(db, 'friends'), where('owner', '==', id), where('friendId', '==', user.uid));
+        const [snapA, snapB] = await Promise.all([getDocs(qfA), getDocs(qfB)]);
+        const ops = [];
+        snapA.forEach((d) => ops.push(deleteDoc(doc(db, 'friends', d.id))));
+        snapB.forEach((d) => ops.push(deleteDoc(doc(db, 'friends', d.id))));
+        await Promise.all(ops);
+        await refreshConnectButtons();
+      }
+      if (action === 'open-dm' && id) {
+        openDm(id, btn.getAttribute('data-name') || '');
+      }
+      if (action === 'notif-accept' && id) {
+        const from = btn.getAttribute('data-from') || '';
+        if (from) {
+          // create friendship both ways so ambos se veem como amigos
+          await Promise.all([
+            addDoc(collection(db, 'friends'), { owner: user.uid, friendId: from, createdAt: serverTimestamp() }),
+            addDoc(collection(db, 'friends'), { owner: from, friendId: user.uid, createdAt: serverTimestamp() })
+          ]);
+        }
+        await deleteDoc(doc(db, 'notifications', id));
+        await refreshConnectButtons();
+      }
+      if (action === 'notif-decline' && id) {
+        await deleteDoc(doc(db, 'notifications', id));
+        await refreshConnectButtons();
+      }
+    } catch (err) {
+      console.error('friend action error', err);
+      alert('Erro ao processar.');
+    }
+  });
+
+  // --- Mini DM chat ---
+  const dmModal = document.getElementById('dmModal');
+  const dmClose = document.getElementById('dmClose');
+  const dmTitle = document.getElementById('dmTitle');
+  const dmSubtitle = document.getElementById('dmSubtitle');
+  const dmMessages = document.getElementById('dmMessages');
+  const dmInput = document.getElementById('dmInput');
+  const dmSend = document.getElementById('dmSend');
+  const dmEditingId = document.getElementById('dmEditingId');
+  const dmNote = document.getElementById('dmNote');
+  const dmEmoji = document.getElementById('dmEmoji');
+  const dmEmojiPanel = document.getElementById('dmEmojiPanel');
+
+  function openDm(friendId, friendName) {
+    const user = auth.currentUser; if (!user || !dmModal) return;
+    currentDm.friendId = friendId;
+    if (dmTitle) dmTitle.textContent = 'Chat';
+    if (dmSubtitle) dmSubtitle.textContent = friendName ? `Conversando com ${friendName}` : '';
+    dmModal.hidden = false; document.body.style.overflow = 'hidden';
+    bindDm(user.uid, friendId);
+  }
+  function closeDm() {
+    if (dmModal) dmModal.hidden = true;
+    document.body.style.overflow = '';
+    if (unsubDm) { unsubDm(); unsubDm = null; }
+    if (dmMessages) dmMessages.innerHTML = '';
+    if (dmInput) dmInput.value = '';
+    if (dmEditingId) dmEditingId.value = '';
+  }
+  dmClose?.addEventListener('click', closeDm);
+  dmModal?.addEventListener('click', (e) => { const t = e.target; if (t instanceof HTMLElement && t.dataset.close === 'true') closeDm(); });
+
+  // Emoji picker (simple)
+  dmEmoji?.addEventListener('click', () => {
+    if (!dmEmojiPanel) return;
+    dmEmojiPanel.hidden = !dmEmojiPanel.hidden;
+  });
+  dmEmojiPanel?.addEventListener('click', (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button.emoji') : null;
+    if (!btn) return;
+    if (dmInput) {
+      dmInput.value = (dmInput.value || '') + btn.textContent;
+      dmInput.focus();
+    }
+  });
+
+  function renderDmItem(did, msg) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg';
+    const who = document.createElement('div'); who.className = 'role'; who.textContent = msg.uid === auth.currentUser?.uid ? 'Você' : 'Amigo';
+    const bubble = document.createElement('div'); bubble.className = 'bubble';
+    const isDeleted = !!msg.deleted;
+    bubble.textContent = isDeleted ? 'Esta mensagem foi excluida' : (msg.text || '');
+    if (isDeleted) bubble.classList.add('deleted');
+    const time = document.createElement('div'); time.className = 'time';
+    time.textContent = msg.updatedAt?.seconds ? new Date(msg.updatedAt.seconds * 1000).toLocaleString('pt-BR') : new Date().toLocaleString('pt-BR');
+    const actions = document.createElement('div'); actions.className = 'list-actions';
+    if (msg.uid === auth.currentUser?.uid && !isDeleted) {
+      const editBtn = document.createElement('button'); editBtn.className = 'btn btn-ghost'; editBtn.setAttribute('aria-label', 'Editar'); editBtn.textContent = '✏️';
+      editBtn.addEventListener('click', () => { if (dmInput) dmInput.value = msg.text || ''; if (dmEditingId) dmEditingId.value = did; dmInput && dmInput.focus(); });
+      const delBtn = document.createElement('button'); delBtn.className = 'btn btn-ghost'; delBtn.setAttribute('aria-label', 'Excluir'); delBtn.textContent = '🗑️';
+      delBtn.addEventListener('click', async () => {
+        try {
+          await updateDoc(doc(db, 'directMessages', did), { text: 'Esta mensagem foi excluida', deleted: true, updatedAt: serverTimestamp() });
+        } catch (e) { console.error('dm delete error', e); dmNote && (dmNote.textContent = 'Erro ao excluir.'); }
+      });
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+    }
+    wrap.appendChild(who); wrap.appendChild(bubble); wrap.appendChild(time); wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function bindDm(ownerId, friendId) {
+    const col = collection(db, 'directMessages');
+    // Stream both sides independently and merge on update
+    const qA = query(col, where('owner', '==', ownerId), where('friendId', '==', friendId));
+    const qB = query(col, where('owner', '==', friendId), where('friendId', '==', ownerId));
+    let items = new Map();
+    const renderAll = () => {
+      if (dmMessages) dmMessages.innerHTML = '';
+      const arr = Array.from(items.values()).sort((a,b) => (a.updatedAt?.seconds || 0) - (b.updatedAt?.seconds || 0));
+      arr.forEach((m) => dmMessages && dmMessages.appendChild(renderDmItem(m.id, m)));
+      if (dmMessages) dmMessages.scrollTop = dmMessages.scrollHeight;
+    };
+    const unsubA = onSnapshot(qA, (snap) => {
+      snap.docChanges().forEach((ch) => {
+        const m = { id: ch.doc.id, ...ch.doc.data() };
+        if (ch.type === 'removed') items.delete(m.id); else items.set(m.id, m);
+      });
+      renderAll();
+    });
+    const unsubB = onSnapshot(qB, (snap) => {
+      snap.docChanges().forEach((ch) => {
+        const m = { id: ch.doc.id, ...ch.doc.data() };
+        if (ch.type === 'removed') items.delete(m.id); else items.set(m.id, m);
+      });
+      renderAll();
+    });
+    unsubDm = () => { unsubA(); unsubB(); };
+  }
+
+  dmSend?.addEventListener('click', async () => {
+    const user = auth.currentUser; if (!user) return;
+    const text = dmInput && dmInput.value ? String(dmInput.value).trim() : '';
+    if (!text) return;
+    const isEditing = dmEditingId && dmEditingId.value;
+    try {
+      if (isEditing) {
+        await updateDoc(doc(db, 'directMessages', dmEditingId.value), { text, updatedAt: serverTimestamp() });
+        dmEditingId.value = '';
+      } else {
+        await addDoc(collection(db, 'directMessages'), { owner: user.uid, friendId: currentDm.friendId, uid: user.uid, text, updatedAt: serverTimestamp() });
+        // notify receiver about new message
+        try {
+          const prof = await getDocs(query(collection(db, 'profiles'), where('__name__', '==', user.uid)));
+          let fromName = 'Membro'; prof.forEach(d => { const v = d.data(); if (v && v.displayName) fromName = v.displayName; });
+          await addDoc(collection(db, 'notifications'), { type: 'message', from: user.uid, fromName, to: currentDm.friendId, createdAt: serverTimestamp(), read: false });
+        } catch {}
+      }
+      if (dmInput) dmInput.value = '';
+    } catch (e) { console.error('dm send error', e); dmNote && (dmNote.textContent = 'Erro ao enviar.'); }
   });
 
   // CRM Modal

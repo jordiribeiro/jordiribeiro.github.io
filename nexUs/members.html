@@ -17,7 +17,7 @@
         <div class="container">
           <div class="">
             <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
-              <img class="brand-logo" src="assets/logo.svg" data-svg="assets/logo.svg" data-png="assets/NexUsLogo.png" width="36" height="36" alt="Logo NexUS" />
+              <img class="brand-logo" src="assets/NexUs -U.jpg" data-svg="assets/nexUs.png" data-png="assets/nexUs.png" width="36" height="36" alt="Logo NexUS" />
               <span class="brand-text"></span>
             </a>
           </div>
@@ -33,7 +33,6 @@
             <li><a href="index.html#inicio">Início</a></li>
             <li><a href="index.html#sobre">Sobre</a></li>
             <li><a href="index.html#beneficios">Benefícios</a></li>
-            <li><a href="index.html#mentorias">Mentorias</a></li>
             <li><a href="index.html#planos">Planos</a></li>
             <li><a href="members.html" aria-current="page">Membros</a></li>
             <li><a href="index.html#depoimentos">Depoimentos</a></li>
@@ -45,9 +44,16 @@
             <button class="btn btn-primary" id="openAuthBtn" type="button">Entrar</button>
           </div>
           <div class="user-menu" id="userMenu" hidden>
-            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
-              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
-            </a>
+            <div class="avatar-wrap">
+              <button class="avatar" id="userAvatarBtn" aria-haspopup="menu" aria-expanded="false">
+                <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+                <span id="notifBadgeAvatar" class="badge avatar-badge" hidden>0</span>
+              </button>
+              <div class="dropdown" id="userDropdown" hidden role="menu" aria-label="Menu do usuário">
+                <button class="menu-item" id="openNotifFromDropdown" type="button">🔔 Notificações <span id="notifBadge" class="badge" hidden>0</span></button>
+                <a class="menu-item" href="profile.html">👤 Perfil</a>
+              </div>
+            </div>
             <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
           </div>
         </nav>
@@ -70,6 +76,8 @@
             <button role="tab" aria-selected="false" aria-controls="tab-treinamentos" id="tab-treinamentos-tab" class="tab">Treinamentos</button>
             <button role="tab" aria-selected="false" aria-controls="tab-ia" id="tab-ia-tab" class="tab">IA</button>
             <button role="tab" aria-selected="false" aria-controls="tab-dashboard" id="tab-dashboard-tab" class="tab">Dashboard</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-amigos" id="tab-amigos-tab" class="tab">Amigos</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-conectar" id="tab-conectar-tab" class="tab">Conectar</button>
           </div>
 
           <section id="tab-perfil" role="tabpanel" aria-labelledby="tab-perfil-tab" class="tab-panel" hidden tabindex="0">
@@ -266,12 +274,75 @@
               <div class="card stat"><p class="stat-num" id="metricContacts">0</p><p class="stat-label">Contatos</p></div>
               <div class="card stat"><p class="stat-num" id="metricDeals">0</p><p class="stat-label">Negociações</p></div>
               <div class="card stat"><p class="stat-num" id="metricPipeline">R$ 0</p><p class="stat-label">Pipeline</p></div>
+              <div class="card stat"><p class="stat-num" id="metricFriends">0</p><p class="stat-label">Amigos</p></div>
             </div>
+          </section>
+
+          <section id="tab-amigos" role="tabpanel" aria-labelledby="tab-amigos-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Amigos</h3>
+            <p class="muted">Perfis com os quais você se conectou.</p>
+            <ul id="friendsList" class="list" aria-label="Lista de amigos"></ul>
+          </section>
+
+          <section id="tab-conectar" role="tabpanel" aria-labelledby="tab-conectar-tab" class="tab-panel" hidden tabindex="0">
+            <h3>Conectar</h3>
+            <p class="muted">Conheça outros membros e envie uma conexão.</p>
+            <ul id="connectList" class="list" aria-label="Perfis para conectar"></ul>
           </section>
         </div>
       </div>
     </main>
 
+    <!-- Mini chat modal (Amigos) -->
+    <div class="modal" id="dmModal" role="dialog" aria-modal="true" aria-labelledby="dmTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="dmClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="dmTitle">Chat</h2>
+          <p class="muted" id="dmSubtitle"></p>
+        </div>
+        <div class="modal-body dm-chat">
+          <div id="dmMessages" class="chat-messages" aria-live="polite" aria-label="Mensagens do chat"></div>
+          <div class="chat-input-row">
+            <button class="btn btn-ghost" id="dmEmoji" type="button" aria-label="Inserir emoji">😀</button>
+            <input type="text" id="dmInput" placeholder="Digite sua mensagem..." autocomplete="off" />
+            <button class="btn btn-primary" id="dmSend" type="button">Enviar</button>
+          </div>
+          <div id="dmEmojiPanel" class="emoji-panel" hidden>
+            <button type="button" class="emoji">😀</button>
+            <button type="button" class="emoji">😁</button>
+            <button type="button" class="emoji">😂</button>
+            <button type="button" class="emoji">😊</button>
+            <button type="button" class="emoji">😍</button>
+            <button type="button" class="emoji">🤝</button>
+            <button type="button" class="emoji">👍</button>
+            <button type="button" class="emoji">🔥</button>
+            <button type="button" class="emoji">🎯</button>
+            <button type="button" class="emoji">🚀</button>
+            <button type="button" class="emoji">💡</button>
+            <button type="button" class="emoji">🙌</button>
+          </div>
+          <input type="hidden" id="dmEditingId" />
+          <p class="form-note" id="dmNote" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications modal -->
+    <div class="modal" id="notifModal" role="dialog" aria-modal="true" aria-labelledby="notifTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="notifClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="notifTitle">Notificações</h2>
+          <p class="muted">Pedidos de amizade e mensagens.</p>
+        </div>
+        <div class="modal-body">
+          <ul id="notifList" class="list notif-list"></ul>
+        </div>
+      </div>
+    </div>
     <!-- Auth Modal -->
     <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" hidden>
       <div class="modal-backdrop" data-close="true"></div>

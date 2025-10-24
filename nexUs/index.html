@@ -40,7 +40,7 @@
         <div class="container">
           <div class="">
             <a class="brand" href="#inicio" aria-label="NexUS - Início">
-              <img class="brand-logo" src="assets/logo.svg" data-svg="assets/logo.svg" data-png="assets/NexUsLogo.png" width="36" height="36" alt="Logo NexUS" />
+              <img class="brand-logo" src="assets/NexUs -U.jpg" data-svg="assets/nexUs.png" data-png="assets/nexUs.png" width="36" height="36" alt="Logo NexUS" />
               <span class="brand-text"></span>
             </a>
         </div>
@@ -67,9 +67,16 @@
             <button class="btn btn-primary" id="openAuthBtn" type="button">Entrar</button>
           </div>
           <div class="user-menu" id="userMenu" hidden>
-            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
-              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
-            </a>
+            <div class="avatar-wrap">
+              <button class="avatar" id="userAvatarBtn" aria-haspopup="menu" aria-expanded="false">
+                <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+                <span id="notifBadgeAvatar" class="badge avatar-badge" hidden>0</span>
+              </button>
+              <div class="dropdown" id="userDropdown" hidden role="menu" aria-label="Menu do usuário">
+                <a class="menu-item" href="members.html#notif">🔔 Notificações <span id="notifBadge" class="badge" hidden>0</span></a>
+                <a class="menu-item" href="profile.html">👤 Perfil</a>
+              </div>
+            </div>
             <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
           </div>
         </nav>
@@ -83,7 +90,7 @@
             <h1 id="hero-title">NexUS — Clube Empreendedor</h1>
             <p class="lead">Cresça com quem acredita em você.</p>
             <div class="cta-group">
-              <a class="btn btn-primary btn-lg" href="#planos">Quero fazer parte</a>
+              <a class="btn btn-primary btn-lg" href="signup.html">Quero fazer parte</a>
               <a class="btn btn-ghost" href="#sobre">Saiba mais</a>
             </div>
             <ul class="trust-list" aria-label="Diferenciais">
@@ -371,11 +378,9 @@
           <div>
             <h2 id="contato-title">Entre para o NexUS</h2>
             <p>Inscreva-se para receber novidades e ser avisado sobre novas vagas.</p>
-            <form class="cta-form" id="ctaForm" aria-label="Formulário de interesse">
-              <label class="sr-only" for="email">Email</label>
-              <input type="email" id="email" name="email" placeholder="seu@email.com" required inputmode="email" autocomplete="email" />
-              <button class="btn btn-primary" type="submit">Quero participar</button>
-            </form>
+            <div class="cta-form">
+              <a class="btn btn-primary" href="signup.html">Quero participar</a>
+            </div>
             <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
           </div>
           <ul class="checklist" aria-label="O que você recebe">

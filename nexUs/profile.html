@@ -35,9 +35,16 @@
             <li><a href="index.html#planos">Planos</a></li>
           </ul>
           <div class="user-menu" id="userMenu" hidden>
-            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
-              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
-            </a>
+            <div class="avatar-wrap">
+              <button class="avatar" id="userAvatarBtn" aria-haspopup="menu" aria-expanded="false">
+                <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+                <span id="notifBadgeAvatar" class="badge avatar-badge" hidden>0</span>
+              </button>
+              <div class="dropdown" id="userDropdown" hidden role="menu" aria-label="Menu do usuário">
+                <a class="menu-item" href="members.html#notif">🔔 Notificações <span id="notifBadge" class="badge" hidden>0</span></a>
+                <a class="menu-item" href="profile.html">👤 Perfil</a>
+              </div>
+            </div>
             <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
           </div>
         </nav>
@@ -88,21 +95,39 @@
             </div>
             <p class="form-note" id="pfNote" role="status" aria-live="polite"></p>
           </form>
+          <hr style="border:0; border-top:1px solid var(--border); margin:0.5rem 0;" />
+          <div class="actions" style="display:flex; gap:0.5rem; justify-content: flex-start;">
+            <button class="btn btn-outline" id="deleteAccountBtn" type="button" style="border-color: var(--danger); color: var(--danger);">Excluir conta</button>
+          </div>
         </div>
       </div>
     </main>
 
     <footer class="site-footer" role="contentinfo">
-      <div class="container footer-inner">
-        <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
-          <img class="brand-logo" src="assets/logo.svg" data-svg="assets/logo.svg" data-png="assets/NexUsLogo.png" width="28" height="28" alt="Logo NexUS" />
-          <span class="brand-text">NexUS</span>
-        </a>
-      </div>
       <div class="container legal">
         <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
       </div>
     </footer>
+
+    <!-- Delete Account Modal -->
+    <div class="modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="deleteClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="deleteTitle">Excluir conta</h2>
+          <p class="muted">Esta ação é permanente e não poderá ser desfeita.</p>
+        </div>
+        <div class="modal-body">
+          <p>Ao confirmar, sua conta será removida do sistema de autenticação. Seus dados podem não ser recuperáveis.</p>
+          <div class="actions" style="display:flex; gap:0.5rem; justify-content:flex-end;">
+            <button class="btn btn-outline" id="deleteCancel" type="button">Cancelar</button>
+            <button class="btn btn-primary" id="deleteConfirm" type="button" style="background: var(--danger);">Excluir definitivamente</button>
+          </div>
+          <p class="form-note" id="deleteNote" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
   </body>
   </html>
 

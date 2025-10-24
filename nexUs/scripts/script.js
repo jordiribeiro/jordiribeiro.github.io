@@ -8,31 +8,61 @@
   const ctaForm = document.getElementById('ctaForm');
   const formNote = document.getElementById('formNote');
   const yearEl = document.getElementById('year');
-  // Brand logo hover swap (PNG only on hover)
+  // Brand logo: default NexUs -U.jpg on desktop, swap to NexUsLogo.png on hover.
+  // On mobile, always show NexUsLogo.png (no hover behavior).
   const brandLogos = Array.from(document.querySelectorAll('.brand-logo'));
-  const MOBILE_LOGO_SRC = 'assets/nexUs.png';
-  function usePng(el) { const png = el.getAttribute('data-png'); if (png) el.setAttribute('src', png); }
-  function useSvg(el) { const svg = el.getAttribute('data-svg'); if (svg) el.setAttribute('src', svg); }
+  const DEFAULT_LOGO_SRC = 'assets/NexUs -U.jpg';
+  const HOVER_LOGO_SRC = 'assets/NexUsLogo.png';
   function isMobileLike() { return window.matchMedia('(max-width: 919px)').matches; }
-  function useMobilePng(el) { el.setAttribute('src', MOBILE_LOGO_SRC); }
-  function swapWithFade(el, toPng) {
+  function useMobileLogo(el) { el.setAttribute('src', HOVER_LOGO_SRC); }
+  function swapWithFade(el, toHover) {
     el.classList.add('swap-fade');
-    const doSwap = () => { toPng ? usePng(el) : useSvg(el); };
+    const doSwap = () => { el.setAttribute('src', toHover ? HOVER_LOGO_SRC : DEFAULT_LOGO_SRC); };
     setTimeout(() => { doSwap(); el.classList.remove('swap-fade'); }, 120);
   }
   brandLogos.forEach((img) => {
-    // On mobile, always use the dedicated PNG; otherwise default to SVG
-    if (isMobileLike()) { useMobilePng(img); } else { useSvg(img); }
-    img.addEventListener('mouseenter', () => { if (!isMobileLike()) { img.classList.add('hovering'); swapWithFade(img, true); } });
-    img.addEventListener('mouseleave', () => { if (!isMobileLike()) { img.classList.remove('hovering'); swapWithFade(img, false); } });
+    if (isMobileLike()) {
+      img.src = HOVER_LOGO_SRC;
+    } else {
+      img.src = DEFAULT_LOGO_SRC;
+      img.addEventListener('mouseenter', () => { if (!isMobileLike()) { img.classList.add('hovering'); swapWithFade(img, true); } });
+      img.addEventListener('mouseleave', () => { if (!isMobileLike()) { img.classList.remove('hovering'); swapWithFade(img, false); } });
+    }
   });
   window.addEventListener('resize', () => {
-    brandLogos.forEach((img) => { if (isMobileLike()) { useMobilePng(img); } else { useSvg(img); } });
+    brandLogos.forEach((img) => { img.src = isMobileLike() ? HOVER_LOGO_SRC : DEFAULT_LOGO_SRC; });
     adjustHeaderOffset();
   });
 
   // Set current year
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  // Global user dropdown handling (delegated) so it works even if elements mount later
+  function setUserDropdownExpanded(expanded) {
+    const btn = document.getElementById('userAvatarBtn');
+    if (btn) btn.setAttribute('aria-expanded', String(expanded));
+  }
+  function toggleUserDropdownDelegated() {
+    const dd = document.getElementById('userDropdown');
+    if (!dd) return;
+    const willOpen = dd.hidden;
+    dd.hidden = !willOpen;
+    setUserDropdownExpanded(willOpen);
+  }
+  function closeUserDropdownDelegated() {
+    const dd = document.getElementById('userDropdown');
+    if (dd && !dd.hidden) { dd.hidden = true; setUserDropdownExpanded(false); }
+  }
+  document.addEventListener('click', (e) => {
+    const target = e.target instanceof HTMLElement ? e.target : null;
+    if (!target) return;
+    const avatarBtn = target.closest('#userAvatarBtn');
+    if (avatarBtn) { e.stopPropagation(); toggleUserDropdownDelegated(); return; }
+    const dd = document.getElementById('userDropdown');
+    if (!dd || dd.hidden) return;
+    const inside = target.closest('#userDropdown') || target.closest('#userAvatarBtn');
+    if (!inside) closeUserDropdownDelegated();
+  });
 
   // Adjust body offset for fixed header to avoid content jump/overlap
   function adjustHeaderOffset() {
