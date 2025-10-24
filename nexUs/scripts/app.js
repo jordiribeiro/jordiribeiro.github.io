@@ -611,10 +611,14 @@ import {
     const submitBtn = chatForm.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
     try {
-      if (aiPlannerEndpoint) {
+    if (aiPlannerEndpoint) {
         const res = await fetchWithRetry(aiPlannerEndpoint, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ goal: text, uid: user.uid })
+        body: JSON.stringify({
+          goal: text,
+          uid: user.uid,
+          context: 'NexUs: comunidade colaborativa e CRM inteligente conectando grandes empresas e pequenos empreendedores. Benefícios: incentivo fiscal 1% para apoio, IA de planejamento, CRM, dashboards, treinamentos e mentorias. Objetivo: crescimento colaborativo, isenção de impostos 3 meses para novos, impacto local positivo. Slogan: Empresas que crescem juntas, fortalecem o futuro.'
+        })
         });
         if (!res.ok) throw new Error(`Falha na IA (${res.status})`);
         const json = await res.json();
@@ -627,9 +631,9 @@ import {
         const k = getApiKey(prov);
         if (!k) { appendMsg('system', 'Configure a chave do provedor selecionado.'); return; }
         if (prov === 'abacus') {
-          const res = await fetchWithRetry('https://routellm.abacus.ai/v1/chat/completions', {
+        const res = await fetchWithRetry('https://routellm.abacus.ai/v1/chat/completions', {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` },
-            body: JSON.stringify({ model: 'route-llm', messages: buildMessages(text), stream: false })
+          body: JSON.stringify({ model: 'route-llm', messages: buildMessages(text), stream: false })
           });
           if (!res.ok) throw new Error(`Falha na IA (${res.status})`);
           const j = await res.json();
@@ -639,7 +643,7 @@ import {
           appendMsg('assistant', plan);
         } else {
           const k2 = k; // openai key
-          const res = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+        const res = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k2}` },
             body: JSON.stringify({ model: 'gpt-4o-mini', messages: buildMessages(text), temperature: 0.3, max_tokens: 800 })
           });
@@ -677,8 +681,9 @@ import {
 
   function buildMessages(userInput) {
     const system = { role: 'system', content: 'Você é um assistente de planejamento estratégico para pequenos negócios.' };
+    const productContext = { role: 'system', content: 'Contexto do produto: NexUs é uma comunidade e CRM inteligente que conecta grandes empresas e pequenos empreendedores, com incentivo fiscal de 1% para quem apoia, mentorias, IA de planejamento estratégico, CRM, dashboards e treinamentos. Objetivo: crescimento colaborativo, redução da desigualdade e incentivo inicial de isenção de impostos por 3 meses para novos empreendedores. Slogan: "Empresas que crescem juntas, fortalecem o futuro."' };
     const history = conversation.filter(m => m.role !== 'system').slice(-6);
-    return [system, ...history, { role: 'user', content: userInput }];
+    return [system, productContext, ...history, { role: 'user', content: userInput }];
   }
 
   async function persistChat(role, content) {
