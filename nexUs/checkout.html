@@ -8,6 +8,7 @@
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles/styles.css" />
     <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -30,8 +31,14 @@
           <ul>
             <li><a href="index.html#inicio">Início</a></li>
             <li><a href="plans.html">Planos</a></li>
-            <li><a href="members.html">Membros</a></li>
+            <li id="navMembers" hidden><a href="members.html">Membros</a></li>
           </ul>
+          <div class="user-menu" id="userMenu" hidden>
+            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
+              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+            </a>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
+          </div>
         </nav>
       </div>
     </header>

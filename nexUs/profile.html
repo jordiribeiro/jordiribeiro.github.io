@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NexUS — Perfil</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
+    <script type="module" src="scripts/profile.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="container header-top-left">
+        <div class="container">
+          <div class="">
+            <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+              <img class="brand-logo" src="assets/logo.svg" data-svg="assets/logo.svg" data-png="assets/NexUsLogo.png" width="36" height="36" alt="Logo NexUS" />
+              <span class="brand-text"></span>
+            </a>
+          </div>
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Abrir menu">
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+            <span class="bar" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="index.html#inicio">Início</a></li>
+            <li><a href="index.html#sobre">Sobre</a></li>
+            <li><a href="index.html#beneficios">Benefícios</a></li>
+            <li><a href="index.html#planos">Planos</a></li>
+          </ul>
+          <div class="user-menu" id="userMenu" hidden>
+            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
+              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+            </a>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section" aria-labelledby="profile-title">
+      <div class="container" style="max-width:720px">
+        <h1 id="profile-title">Seu perfil</h1>
+        <p class="muted">Atualize suas informações e a foto de perfil.</p>
+
+        <div class="card" style="padding:1rem; border:1px solid var(--border); border-radius: var(--radius-l); display:grid; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <div class="avatar" style="width:84px; height:84px;">
+              <img id="pfAvatarPreview" alt="Foto de perfil" width="84" height="84" />
+            </div>
+            <div style="display:grid; gap:0.5rem;">
+              <input type="file" id="pfAvatarFile" accept="image/*" />
+              <div style="display:flex; gap:0.5rem;">
+                <button class="btn btn-primary" id="pfAvatarSave" type="button">Salvar foto</button>
+                <button class="btn btn-outline" id="pfAvatarRemove" type="button">Remover foto</button>
+              </div>
+              <small class="form-note">Formatos aceitos: JPG, PNG, WebP. Tamanho recomendado: quadrado.</small>
+            </div>
+          </div>
+
+          <form id="pfForm" class="profile-form">
+            <div class="grid-2">
+              <div class="field">
+                <label for="pfDisplayName">Nome</label>
+                <input type="text" id="pfDisplayName" name="displayName" placeholder="Seu nome" />
+              </div>
+              <div class="field">
+                <label for="pfCompany">Empresa</label>
+                <input type="text" id="pfCompany" name="company" placeholder="Nome da empresa" />
+              </div>
+              <div class="field">
+                <label for="pfBio">Bio</label>
+                <input type="text" id="pfBio" name="bio" placeholder="Breve descrição" />
+              </div>
+              <div class="field">
+                <label for="pfSite">Site</label>
+                <input type="url" id="pfSite" name="site" placeholder="https://" />
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Salvar perfil</button>
+            </div>
+            <p class="form-note" id="pfNote" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container footer-inner">
+        <a class="brand" href="index.html#inicio" aria-label="NexUS - Início">
+          <img class="brand-logo" src="assets/logo.svg" data-svg="assets/logo.svg" data-png="assets/NexUsLogo.png" width="28" height="28" alt="Logo NexUS" />
+          <span class="brand-text">NexUS</span>
+        </a>
+      </div>
+      <div class="container legal">
+        <small>© <span id="year"></span> NexUS. Todos os direitos reservados.</small>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

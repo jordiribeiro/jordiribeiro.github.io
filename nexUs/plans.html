@@ -8,6 +8,7 @@
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles/styles.css" />
     <script defer src="scripts/script.js"></script>
+    <script type="module" src="scripts/auth.js"></script>
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -31,15 +32,20 @@
             <li><a href="index.html#inicio">Início</a></li>
             <li><a href="index.html#sobre">Sobre</a></li>
             <li><a href="index.html#beneficios">Benefícios</a></li>
-            <li><a href="index.html#mentorias">Mentorias</a></li>
             <li><a href="plans.html" aria-current="page">Planos</a></li>
-            <li><a href="members.html">Membros</a></li>
+            <li id="navMembers" hidden><a href="members.html">Membros</a></li>
             <li><a href="index.html#faq">FAQ</a></li>
             <li><a href="index.html#contato">Contato</a></li>
           </ul>
           <div class="nav-cta">
             <a class="btn btn-outline" href="plans.html">Assinar</a>
             <a class="btn btn-primary" href="checkout.html">Checkout</a>
+          </div>
+          <div class="user-menu" id="userMenu" hidden>
+            <a href="profile.html" class="avatar" id="userAvatarLink" aria-label="Abrir perfil">
+              <img id="userAvatar" alt="Seu perfil" width="32" height="32" />
+            </a>
+            <button class="btn btn-outline" id="logoutBtn" type="button">Sair</button>
           </div>
         </nav>
       </div>

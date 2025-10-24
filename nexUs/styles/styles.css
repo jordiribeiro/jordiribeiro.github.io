@@ -131,7 +131,12 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
 .primary-nav a:hover, .primary-nav a:focus { color: var(--text); background: color-mix(in oklab, var(--surface), transparent 55%); }
 .nav-cta { display: none; gap: 0.6rem; }
 .user-menu { display: none; align-items: center; gap: 0.6rem; }
+/* Force-hide container when hidden attribute is present */
+.user-menu[hidden] { display: none !important; }
+html.authed .user-menu { display: inline-flex; }
 .user-email { color: var(--muted); font-size: 0.95rem; }
+.avatar { display: inline-flex; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .nav-toggle { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; border: 1px solid var(--border); background: transparent; border-radius: 10px; cursor: pointer; }
 .nav-toggle .bar { height: 2px; width: 22px; background: var(--text); border-radius: 2px; margin-inline: auto; }
@@ -162,7 +167,36 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
   .primary-nav { gap: 1rem; }
   .primary-nav ul { display: inline-flex; }
   .nav-cta { display: inline-flex; }
-  .user-menu { display: inline-flex; }
+  html.authed .user-menu { display: inline-flex; }
+}
+
+/* Align brand and menu in header top area */
+.site-header .header-top-left { display: grid; grid-template-columns: auto 1fr; align-items: center; }
+.site-header .header-top-left > .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 64px;
+}
+
+/* Mobile: logo à esquerda e botão do menu próximo da borda direita */
+@media (max-width: 919px) {
+  .site-header .header-top-left { padding-inline: 0; }
+  /* Tratar logo e menu em colunas separadas na mesma linha */
+  .site-header .header-top-left > .container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding-inline: 0.5rem;
+    gap: 0.5rem;
+  }
+  .site-header .header-top-left > .container .brand { margin-left: 0; justify-self: start; }
+  .site-header .header-top-left { position: relative; }
+  /* Força o botão do menu a ficar encostado na borda direita */
+  .site-header .nav-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); margin: 0; }
+  /* Reserva espaço à direita para não sobrepor o conteúdo */
+  .site-header .header-top-left > .container { padding-right: 56px; }
 }
 
 /* Prevent logo/menu overlap on tighter desktop widths */

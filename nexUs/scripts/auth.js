@@ -1,7 +1,7 @@
 // Auth module using Firebase Web SDK (ESM) — works on GitHub Pages
 // Steps: add your Firebase config in scripts/firebase-config.js
 
-import { app, auth } from './firebase-config.js';
+import { app, auth, db } from './firebase-config.js';
 import {
   browserLocalPersistence,
   setPersistence,
@@ -24,8 +24,11 @@ import {
   const authNote = document.getElementById('authNote');
   const userMenu = document.getElementById('userMenu');
   const userEmailEl = document.getElementById('userEmail');
+  const userAvatar = document.getElementById('userAvatar');
+  const userAvatarLink = document.getElementById('userAvatarLink');
   const logoutBtn = document.getElementById('logoutBtn');
   const membersSection = document.querySelector('[data-members-only]');
+  const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="%23e5e7eb"/><circle cx="64" cy="48" r="24" fill="%239ca3af"/><rect x="24" y="80" width="80" height="32" rx="16" fill="%239ca3af"/></svg>';
 
   // Helpers modal
   function openModal() {
@@ -59,15 +62,41 @@ import {
   // Gate member content by auth state
   function updateUI(user) {
     const isLogged = !!user;
+    // Root auth class for CSS gating
+    const root = document.documentElement;
+    if (isLogged) root.classList.add('authed'); else root.classList.remove('authed');
     // Navbar controls
     if (userMenu) {
       userMenu.hidden = !isLogged;
     }
     if (openAuthBtn) {
       openAuthBtn.hidden = isLogged;
+      // extra safeguard against visibility glitches
+      openAuthBtn.style.display = isLogged ? 'none' : '';
     }
-    if (userEmailEl) {
-      userEmailEl.textContent = isLogged ? (user.email || '') : '';
+    // Toggle nav members link
+    const navMembers = document.getElementById('navMembers');
+    if (navMembers) navMembers.hidden = !isLogged;
+    // Toggle avatar link explicitly
+    if (userAvatarLink) userAvatarLink.hidden = !isLogged;
+    if (userEmailEl) { userEmailEl.textContent = ''; }
+    if (userAvatar instanceof HTMLImageElement) {
+      if (isLogged) {
+        // Prefer custom avatar from Firestore profile doc if present; fallback to default
+        (async () => {
+          try {
+            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
+            const ref = doc(db, 'profiles', user.uid);
+            const snap = await getDoc(ref);
+            const url = (snap.exists() && snap.data()?.photoURL) || '';
+            userAvatar.src = url || DEFAULT_AVATAR;
+          } catch {
+            userAvatar.src = DEFAULT_AVATAR;
+          }
+        })();
+      } else {
+        userAvatar.src = '';
+      }
     }
     // Members section
     if (membersSection instanceof HTMLElement) {
