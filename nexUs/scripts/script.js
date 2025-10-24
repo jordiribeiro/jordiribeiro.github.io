@@ -4,12 +4,49 @@
   const htmlEl = document.documentElement;
   const navToggle = document.getElementById('navToggle');
   const primaryNav = document.getElementById('primaryNav');
+  const siteHeader = document.querySelector('.site-header');
   const ctaForm = document.getElementById('ctaForm');
   const formNote = document.getElementById('formNote');
   const yearEl = document.getElementById('year');
+  // Brand logo hover swap (PNG only on hover)
+  const brandLogos = Array.from(document.querySelectorAll('.brand-logo'));
+  const MOBILE_LOGO_SRC = 'assets/nexUs.png';
+  function usePng(el) { const png = el.getAttribute('data-png'); if (png) el.setAttribute('src', png); }
+  function useSvg(el) { const svg = el.getAttribute('data-svg'); if (svg) el.setAttribute('src', svg); }
+  function isMobileLike() { return window.matchMedia('(max-width: 919px)').matches; }
+  function useMobilePng(el) { el.setAttribute('src', MOBILE_LOGO_SRC); }
+  function swapWithFade(el, toPng) {
+    el.classList.add('swap-fade');
+    const doSwap = () => { toPng ? usePng(el) : useSvg(el); };
+    setTimeout(() => { doSwap(); el.classList.remove('swap-fade'); }, 120);
+  }
+  brandLogos.forEach((img) => {
+    // On mobile, always use the dedicated PNG; otherwise default to SVG
+    if (isMobileLike()) { useMobilePng(img); } else { useSvg(img); }
+    img.addEventListener('mouseenter', () => { if (!isMobileLike()) { img.classList.add('hovering'); swapWithFade(img, true); } });
+    img.addEventListener('mouseleave', () => { if (!isMobileLike()) { img.classList.remove('hovering'); swapWithFade(img, false); } });
+  });
+  window.addEventListener('resize', () => {
+    brandLogos.forEach((img) => { if (isMobileLike()) { useMobilePng(img); } else { useSvg(img); } });
+    adjustHeaderOffset();
+  });
 
   // Set current year
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  // Adjust body offset for fixed header to avoid content jump/overlap
+  function adjustHeaderOffset() {
+    const header = siteHeader instanceof HTMLElement ? siteHeader : null;
+    if (!header) return;
+    const h = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+    document.body.style.paddingTop = h + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', adjustHeaderOffset, { once: true });
+  } else {
+    adjustHeaderOffset();
+  }
 
   // If redirected with auth=1, open auth modal after load
   const qp = new URLSearchParams(window.location.search);
@@ -38,11 +75,19 @@
       document.body.style.overflow = '';
       if (focusTrapHandler) { document.removeEventListener('keydown', focusTrapHandler); focusTrapHandler = null; }
       removeBackdrop();
+      // Hide inline close button after closing
+      const closeBtn = primaryNav.querySelector('.nav-close');
+      if (closeBtn instanceof HTMLElement) closeBtn.style.display = '';
     };
     if (primaryNav.classList.contains('open')) {
-      primaryNav.classList.remove('open');
+      // Keep 'open' class to preserve transition properties, only remove after transition ends
       primaryNav.classList.add('closing');
-      const onEnd = (ev) => { if (ev.propertyName === 'transform') { primaryNav.removeEventListener('transitionend', onEnd); end(); } };
+      const onEnd = (ev) => {
+        if (ev.propertyName !== 'transform') return;
+        primaryNav.removeEventListener('transitionend', onEnd);
+        primaryNav.classList.remove('open');
+        end();
+      };
       primaryNav.addEventListener('transitionend', onEnd);
     } else {
       end();
@@ -96,6 +141,7 @@
     };
     document.addEventListener('keydown', focusTrapHandler);
   }
+
   navToggle?.addEventListener('click', () => {
     const isOpen = primaryNav?.classList.contains('open');
     if (isOpen) closeNav(); else openNav();
@@ -108,11 +154,6 @@
   // Close on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeNav();
-  });
-
-  // Close menu if viewport switches to desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 920) closeNav();
   });
 
   // Smooth scroll and focus management
