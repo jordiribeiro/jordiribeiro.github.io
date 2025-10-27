@@ -55,7 +55,9 @@
           </div>
           <div class="field">
             <label for="suPassword">Senha</label>
-            <input id="suPassword" type="password" name="password" autocomplete="new-password" required />
+            <input id="suPassword" type="password" name="password" autocomplete="new-password" required aria-describedby="pwHelp" />
+            <div class="progress" id="pwBar" aria-hidden="true"><div class="progress-inner" id="pwBarInner" style="width:0%"></div></div>
+            <small id="pwHelp" class="muted">Mínimo 8 caracteres, 1 maiúscula e 1 caractere especial.</small>
           </div>
           <div class="field">
             <label for="suName">Nome</label>

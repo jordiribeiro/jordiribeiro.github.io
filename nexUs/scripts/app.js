@@ -5,6 +5,7 @@ import {
 import {
   collection,
   addDoc,
+  setDoc,
   query,
   where,
   orderBy,
@@ -64,6 +65,8 @@ import {
   let currentDm = { friendId: null };
   let unsubNotifs = null;
   let unsubPendingFrom = null;
+  let friendsCleanupInterval = null;
+  let friendsRenderVersion = 0;
   async function markNotificationsRead() {
     const user = auth.currentUser; if (!user) return;
     try {
@@ -123,6 +126,7 @@ import {
       if (unsubDm) { unsubDm(); unsubDm = null; }
       if (unsubNotifs) { unsubNotifs(); unsubNotifs = null; }
       if (unsubPendingFrom) { unsubPendingFrom(); unsubPendingFrom = null; }
+      if (friendsCleanupInterval) { clearInterval(friendsCleanupInterval); friendsCleanupInterval = null; }
       currentDm = { friendId: null };
       const grid = document.getElementById('trainingGrid'); if (grid) grid.innerHTML = '';
       const cnt = document.getElementById('trainingCount'); if (cnt) cnt.textContent = '0/20';
@@ -133,20 +137,38 @@ import {
       const friendsList = document.getElementById('friendsList');
       const qf = query(collection(db, 'friends'), where('owner', '==', user.uid));
       unsubFriends = onSnapshot(qf, async (snap) => {
+        const renderVersion = ++friendsRenderVersion;
+        const idSet = new Set();
+        snap.forEach(d => { const v = d.data(); if (v && v.friendId) idSet.add(String(v.friendId)); });
+        if (metricFriends) metricFriends.textContent = String(idSet.size);
+        // fetch all profiles in parallel
+        const ids = Array.from(idSet);
+        const { getDoc } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
+        const results = await Promise.all(ids.map(async (fid) => {
+          try {
+            const pdoc = await getDoc(doc(db, 'profiles', fid));
+            const exists = pdoc.exists();
+            const pdata = exists ? pdoc.data() : {};
+            const deactivated = !!(pdata && (pdata.deactivated || pdata.deletedAt));
+            return { fid, exists, deactivated, pdata };
+          } catch { return { fid, exists: false, pdata: {} }; }
+        }));
+        // if a newer snapshot arrived while we were fetching, abort this render
+        if (renderVersion !== friendsRenderVersion) return;
         if (friendsList) friendsList.innerHTML = '';
-        const ids = [];
-        snap.forEach(d => { const v = d.data(); if (v && v.friendId) ids.push(v.friendId); });
-        if (metricFriends) metricFriends.textContent = String(ids.length);
-        // map ids -> profiles
-        for (const fid of ids) {
-          const pdoc = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js').then(m => m.getDoc(m.doc(db, 'profiles', fid)));
-          const pdata = pdoc.exists() ? pdoc.data() : {};
+        const frag = document.createDocumentFragment();
+        for (const { fid, exists, deactivated, pdata } of results) {
+          if (!exists || deactivated) { continue; }
           const li = document.createElement('li');
           li.innerHTML = `<span style="display:flex; align-items:center; gap:0.5rem;"><img alt="" src="${escapeHtml(pdata.photoData || pdata.photoURL || '')}" style="width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);" onerror="this.style.display='none'"/><strong>${escapeHtml(pdata.displayName || pdata.company || 'Membro')}</strong></span>
           <span class="list-actions"><button class="btn btn-primary" data-action="open-dm" data-id="${fid}" data-name="${escapeHtml(pdata.displayName || pdata.company || 'Membro')}">Chat</button><a class="btn btn-ghost" href="profile-details.html?uid=${fid}">Ver</a><button class="btn btn-ghost" data-action="remove-friend" data-id="${fid}">Remover</button></span>`;
-          friendsList && friendsList.appendChild(li);
+          frag.appendChild(li);
         }
+        friendsList && friendsList.appendChild(frag);
       });
+      // start background cleanup to prune orphan friendships and force freshness every 5s
+      if (friendsCleanupInterval) { clearInterval(friendsCleanupInterval); friendsCleanupInterval = null; }
+      friendsCleanupInterval = setInterval(() => { refreshFriendsHard().catch(() => {}); }, 5000);
     } catch (e) { console.error('friends subscribe error', e); }
 
     // subscribe connect list (all profiles except me)
@@ -204,7 +226,7 @@ import {
           const isPending = pendingIds.has(d.id);
           const li = document.createElement('li');
           li.innerHTML = `<span style=\"display:flex; align-items:center; gap:0.5rem;\"><img alt=\"\" src=\"${escapeHtml(v.photoData || v.photoURL || '')}\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);\" onerror=\"this.style.display='none'\"/><strong>${escapeHtml(v.displayName || v.company || 'Membro')}</strong></span>
-          <span class=\"list-actions\"><a class=\"btn btn-ghost\" href=\"profile-details.html?uid=${d.id}\">Ver</a><button class=\"btn ${isFriend ? 'btn-outline' : (isPending ? 'btn-outline' : 'btn-primary')}\" data-action=\"add-friend\" data-id=\"${d.id}\" ${isFriend ? 'disabled' : (isPending ? 'disabled' : '')}>${isFriend ? 'Conectado' : (isPending ? 'Solicitação enviada' : 'Conectar')}</button></span>`;
+          <span class=\"list-actions\"><a class=\"btn btn-ghost\" href=\"profile-details.html?uid=${d.id}\">Ver</a><button class=\"btn ${isFriend ? 'btn-outline' : (isPending ? 'btn-outline' : 'btn-primary')}\" data-action=\"add-friend\" data-id=\"${d.id}\" data-state=\"${isFriend ? 'friend' : (isPending ? 'pending' : 'idle')}\" ${isFriend ? 'disabled' : ''}>${isFriend ? 'Conectado' : (isPending ? 'Solicitação enviada' : 'Conectar')}</button></span>`;
           connectList && connectList.appendChild(li);
         });
       });
@@ -383,21 +405,137 @@ import {
       const friendsSnap = await getDocs(query(collection(db, 'friends'), where('owner', '==', user.uid)));
       const friendIds = new Set();
       friendsSnap.forEach(d => { const v = d.data(); if (v && v.friendId) friendIds.add(String(v.friendId)); });
+      const pendingSnap = await getDocs(query(collection(db, 'notifications'), where('from', '==', user.uid), where('type', '==', 'friend_request')));
+      const pendingIds = new Set(); pendingSnap.forEach(d => { const v = d.data(); if (v && v.to) pendingIds.add(String(v.to)); });
       const buttons = connectList.querySelectorAll('button[data-action="add-friend"][data-id]');
       buttons.forEach((btn) => {
         if (!(btn instanceof HTMLButtonElement)) return;
         const id = btn.getAttribute('data-id') || '';
         const isFriend = friendIds.has(id);
-        btn.textContent = isFriend ? 'Conectado' : 'Conectar';
-        btn.classList.toggle('btn-primary', !isFriend);
-        btn.classList.toggle('btn-outline', isFriend);
+        const isPending = !isFriend && pendingIds.has(id);
+        btn.textContent = isFriend ? 'Conectado' : (isPending ? 'Solicitação enviada' : 'Conectar');
+        btn.classList.toggle('btn-primary', !isFriend && !isPending);
+        btn.classList.toggle('btn-outline', isFriend || isPending);
         btn.disabled = isFriend;
+        btn.setAttribute('data-state', isFriend ? 'friend' : (isPending ? 'pending' : 'idle'));
       });
     } catch (e) { console.error('refreshConnectButtons error', e); }
   }
 
+  // Simple AJAX-like refresher for UI after actions (e.g., accept friend request)
+  function ajax(action) {
+    try { refreshConnectButtons(); } catch (e) { console.warn('ajax refreshConnectButtons', e); }
+  }
+  try { if (typeof window !== 'undefined') { window.ajax = ajax; } } catch {}
+
   function clearList(listEl) { if (listEl) listEl.innerHTML = ''; }
-  function escapeHtml(s) { return String(s).replace(/[&<>"]+/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function escapeHtml(s) { return String(s).replace(/[&<>"\"]+/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // --- Input masks (CPF/CNPJ and BRL) ---
+  function onlyDigits(s) { return String(s || '').replace(/\D+/g, ''); }
+  function formatCpf(d) {
+    const a = d.slice(0, 3);
+    const b = d.slice(3, 6);
+    const c = d.slice(6, 9);
+    const e = d.slice(9, 11);
+    let out = '';
+    if (a) out += a;
+    if (b) out += (out ? '.' : '') + b;
+    if (c) out += (out ? '.' : '') + c;
+    if (e) out += (out ? '-' : '') + e;
+    return out;
+  }
+  function formatCnpj(d) {
+    const a = d.slice(0, 2);
+    const b = d.slice(2, 5);
+    const c = d.slice(5, 8);
+    const d4 = d.slice(8, 12);
+    const e = d.slice(12, 14);
+    let out = '';
+    if (a) out += a;
+    if (b) out += (out ? '.' : '') + b;
+    if (c) out += (out ? '.' : '') + c;
+    if (d4) out += (out ? '/' : '') + d4;
+    if (e) out += (out ? '-' : '') + e;
+    return out;
+  }
+  function formatCpfCnpj(d) {
+    if (d.length <= 11) return formatCpf(d);
+    return formatCnpj(d);
+  }
+  function formatBrlFromDigits(digits) {
+    // digits represent cents
+    const d = digits.replace(/^0+/, '') || '0';
+    const cents = d.padStart(3, '0');
+    const intPart = cents.slice(0, -2);
+    const frac = cents.slice(-2);
+    const intWithSep = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `R$ ${intWithSep},${frac}`;
+  }
+  function parseBrlToNumber(s) {
+    const d = onlyDigits(s);
+    if (!d) return 0;
+    return Number(d) / 100;
+  }
+  function formatBrlNumber(n) {
+    try { return (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); } catch { return `R$ ${(Number(n) || 0).toFixed(2)}`; }
+  }
+
+  // --- Friends helpers to avoid duplicates ---
+  async function hasFriendship(ownerId, friendId) {
+    const qf = query(collection(db, 'friends'), where('owner', '==', ownerId), where('friendId', '==', friendId));
+    const snap = await getDocs(qf);
+    return !snap.empty;
+  }
+  async function ensureFriendship(ownerId, friendId) {
+    // Use deterministic doc id to prevent duplicates
+    const fid = `fr_${ownerId}_${friendId}`;
+    try {
+      await setDoc(doc(db, 'friends', fid), { owner: ownerId, friendId, createdAt: serverTimestamp() }, { merge: true });
+    } catch (e) {
+      console.warn('ensureFriendship setDoc warn', e);
+    }
+    return true;
+  }
+  async function ensureFriendshipBoth(a, b) {
+    await Promise.all([ensureFriendship(a, b), ensureFriendship(b, a)]);
+  }
+
+  // Aggressive refresh: prune friendships to deleted profiles and legacy duplicates
+  async function refreshFriendsHard() {
+    try {
+      const user = auth.currentUser; if (!user) return;
+      const qf = query(collection(db, 'friends'), where('owner', '==', user.uid));
+      const snap = await getDocs(qf);
+      const toCheck = [];
+      snap.forEach(d => { const v = d.data(); if (v && v.friendId) toCheck.push({ docId: d.id, friendId: String(v.friendId) }); });
+      if (!toCheck.length) return;
+      const { getDoc } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
+      const deletions = [];
+      for (const it of toCheck) {
+        try {
+          const p = await getDoc(doc(db, 'profiles', it.friendId));
+          const exists = p.exists();
+          const pdata = exists ? p.data() : null;
+          const deactivated = !!(pdata && (pdata.deactivated || pdata.deletedAt));
+          if (!exists || deactivated) {
+            // delete deterministic id first
+            deletions.push(deleteDoc(doc(db, 'friends', `fr_${user.uid}_${it.friendId}`)).catch(() => {}));
+            // also delete legacy/random doc id
+            deletions.push(deleteDoc(doc(db, 'friends', it.docId)).catch(() => {}));
+            // attempt reverse deterministic as well (in case it exists)
+            deletions.push(deleteDoc(doc(db, 'friends', `fr_${it.friendId}_${user.uid}`)).catch(() => {}));
+          }
+        } catch {}
+      }
+      if (deletions.length) await Promise.all(deletions);
+      // also update connect buttons state (friend count etc.)
+      await refreshConnectButtons();
+    } catch (e) { /* silent */ }
+  }
+
+  // Public alias for clarity with product wording (deleted friends checker)
+  async function verificarAmigosExcluidos() { return refreshFriendsHard(); }
 
   // Minimal Markdown renderer (safe): supports paragraphs, lists, **bold**, `code`, ```code blocks```
   function renderMarkdownToHtml(text) {
@@ -712,12 +850,58 @@ import {
     if (!user || !action) return;
     try {
       if (action === 'add-friend') {
-        // send friend request notification to target user
-        const prof = await getDocs(query(collection(db, 'profiles'), where('__name__', '==', user.uid)));
-        let fromName = 'Membro'; prof.forEach(d => { const v = d.data(); if (v && v.displayName) fromName = v.displayName; });
-        await addDoc(collection(db, 'notifications'), { type: 'friend_request', from: user.uid, fromName, to: id, createdAt: serverTimestamp(), read: false });
-        btn.textContent = 'Solicitado'; btn.setAttribute('disabled', 'true');
-        await refreshConnectButtons();
+        const state = btn.getAttribute('data-state') || 'idle';
+        // Cancel pending request on click when hovering/clicking pending
+        if (state === 'pending') {
+          // try deterministic id deletion first
+          const frId = `fr_${user.uid}_${id}`;
+          try { await deleteDoc(doc(db, 'notifications', frId)); } catch {}
+          // fallback: delete any matching outgoing requests
+          try {
+            const outgoingQ = query(collection(db, 'notifications'), where('type', '==', 'friend_request'), where('from', '==', user.uid), where('to', '==', id));
+            const outgoingSnap = await getDocs(outgoingQ);
+            const ops = [];
+            outgoingSnap.forEach(d => ops.push(deleteDoc(doc(db, 'notifications', d.id))));
+            await Promise.all(ops);
+          } catch {}
+          btn.textContent = 'Conectar';
+          btn.classList.add('btn-primary');
+          btn.classList.remove('btn-outline');
+          btn.removeAttribute('disabled');
+          btn.setAttribute('data-state', 'idle');
+          await refreshConnectButtons();
+          return;
+        }
+        // prevent rapid double-clicks when sending
+        btn.setAttribute('disabled', 'true');
+        // already friends? reflect UI
+        if (await hasFriendship(user.uid, id) || await hasFriendship(id, user.uid)) {
+          btn.textContent = 'Conectado';
+          await refreshConnectButtons();
+        } else {
+          // incoming request from target? auto-accept
+          const incomingQ = query(collection(db, 'notifications'), where('type', '==', 'friend_request'), where('from', '==', id), where('to', '==', user.uid));
+          const incomingSnap = await getDocs(incomingQ);
+          if (!incomingSnap.empty) {
+            await ensureFriendshipBoth(user.uid, id);
+            const rm = [];
+            incomingSnap.forEach(d => rm.push(deleteDoc(doc(db, 'notifications', d.id))));
+            await Promise.all(rm);
+            btn.textContent = 'Conectado';
+          } else {
+            // use deterministic ID to avoid duplicate outgoing requests
+            const prof = await getDocs(query(collection(db, 'profiles'), where('__name__', '==', user.uid)));
+            let fromName = 'Membro'; prof.forEach(d => { const v = d.data(); if (v && v.displayName) fromName = v.displayName; });
+            const frId = `fr_${user.uid}_${id}`;
+            await setDoc(doc(db, 'notifications', frId), { type: 'friend_request', from: user.uid, fromName, to: id, createdAt: serverTimestamp(), read: false });
+            btn.textContent = 'Solicitação enviada';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline');
+            btn.removeAttribute('disabled');
+            btn.setAttribute('data-state', 'pending');
+          }
+          await refreshConnectButtons();
+        }
       }
       if (action === 'remove-friend') {
         // remove both directions
@@ -736,23 +920,33 @@ import {
       if (action === 'notif-accept' && id) {
         const from = btn.getAttribute('data-from') || '';
         if (from) {
-          // create friendship both ways so ambos se veem como amigos
-          await Promise.all([
-            addDoc(collection(db, 'friends'), { owner: user.uid, friendId: from, createdAt: serverTimestamp() }),
-            addDoc(collection(db, 'friends'), { owner: from, friendId: user.uid, createdAt: serverTimestamp() })
-          ]);
+          await ensureFriendshipBoth(user.uid, from);
         }
         await deleteDoc(doc(db, 'notifications', id));
-        await refreshConnectButtons();
+        try { if (typeof window !== 'undefined' && typeof window.ajax === 'function') window.ajax('notif-accept'); } catch {}
       }
       if (action === 'notif-decline' && id) {
         await deleteDoc(doc(db, 'notifications', id));
-        await refreshConnectButtons();
+        try { if (typeof window !== 'undefined' && typeof window.ajax === 'function') window.ajax('notif-decline'); } catch {}
       }
     } catch (err) {
       console.error('friend action error', err);
       alert('Erro ao processar.');
     }
+  });
+
+  // Hover-to-cancel UX for pending friend requests
+  document.addEventListener('mouseover', (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button[data-action="add-friend"][data-state="pending"]') : null;
+    if (!btn) return;
+    btn.dataset.prevText = btn.textContent || '';
+    btn.textContent = 'Cancelar';
+  });
+  document.addEventListener('mouseout', (e) => {
+    const btn = e.target instanceof HTMLElement ? e.target.closest('button[data-action="add-friend"][data-state="pending"]') : null;
+    if (!btn) return;
+    const prev = btn.dataset.prevText || 'Solicitação enviada';
+    btn.textContent = prev;
   });
 
   // --- Mini DM chat ---
@@ -1038,19 +1232,64 @@ import {
   // Profile form
   const profileForm = document.getElementById('profileForm');
   const profileNote = document.getElementById('profileNote');
+  const pfCnpjEl = document.getElementById('pfCnpj');
+  const pfRevenueEl = document.getElementById('pfRevenue');
+
+  // Attach masks when elements exist
+  if (pfCnpjEl instanceof HTMLInputElement) {
+    pfCnpjEl.addEventListener('input', () => {
+      const d = onlyDigits(pfCnpjEl.value).slice(0, 14);
+      pfCnpjEl.value = formatCpfCnpj(d);
+    });
+  }
+  if (pfRevenueEl instanceof HTMLInputElement) {
+    // Ensure mask works: use text input with numeric keypad
+    try { pfRevenueEl.type = 'text'; } catch {}
+    pfRevenueEl.setAttribute('inputmode', 'numeric');
+    // Remove pattern because masked value contém caracteres não numéricos
+    pfRevenueEl.removeAttribute('pattern');
+    pfRevenueEl.setAttribute('autocomplete', 'off');
+    pfRevenueEl.removeAttribute('min');
+    pfRevenueEl.removeAttribute('step');
+    if (!pfRevenueEl.placeholder) pfRevenueEl.placeholder = 'R$ 0,00';
+    pfRevenueEl.addEventListener('input', () => {
+      const d = onlyDigits(pfRevenueEl.value).slice(0, 15); // up to trillions in cents
+      pfRevenueEl.value = formatBrlFromDigits(d);
+      try { pfRevenueEl.setCustomValidity(''); } catch {}
+    });
+    // Ensure focus shows formatted and caret stays at end
+    pfRevenueEl.addEventListener('focus', () => {
+      const d = onlyDigits(pfRevenueEl.value);
+      pfRevenueEl.value = formatBrlFromDigits(d);
+      // move caret to end
+      try { pfRevenueEl.setSelectionRange(pfRevenueEl.value.length, pfRevenueEl.value.length); } catch {}
+      try { pfRevenueEl.setCustomValidity(''); } catch {}
+    });
+    pfRevenueEl.addEventListener('blur', () => {
+      // keep formatted; no-op (parsing handled on submit)
+      try { pfRevenueEl.setCustomValidity(''); } catch {}
+    });
+  }
   profileForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
     if (!user) return;
     const data = new FormData(profileForm);
     const type = String(data.get('type') || 'micro');
-    const revenue = Number(data.get('revenue') || 0);
+    const revenueRaw = (pfRevenueEl instanceof HTMLInputElement) ? pfRevenueEl.value : (String(data.get('revenue') || ''));
+    const revenueParsed = parseBrlToNumber(revenueRaw);
+    const revenue = Number.isFinite(revenueParsed) && revenueParsed >= 0 ? revenueParsed : 0;
     const cnpj = String(data.get('cnpj') || '').trim();
     const startedAt = String(data.get('startedAt') || '');
-    const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
-    const payload = { uid: user.uid, type, revenue, cnpj, startedAt, updatedAt: serverTimestamp() };
-    await setDoc(doc(db, 'companies', user.uid), payload, { merge: true });
-    profileNote && (profileNote.textContent = 'Perfil salvo.');
+    try {
+      const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
+      const payload = { uid: user.uid, type, revenue, cnpj, startedAt, updatedAt: serverTimestamp() };
+      await setDoc(doc(db, 'companies', user.uid), payload, { merge: true });
+      profileNote && (profileNote.textContent = 'Perfil salvo.');
+    } catch (err) {
+      console.error('profile save error', err);
+      profileNote && (profileNote.textContent = 'Erro ao salvar perfil. Tente novamente.');
+    }
   });
 
   function fillProfileForm(data) {
@@ -1060,7 +1299,19 @@ import {
     };
     Object.entries(map).forEach(([key, id]) => {
       const el = document.getElementById(id);
-      if (el && data[key] != null) el.value = String(data[key]);
+      if (el && data[key] != null) {
+        if (id === 'pfRevenue') {
+          const v = Number(data[key] || 0);
+          // keep digits-based formatting for consistent live editing
+          const cents = Math.round(v * 100);
+          el.value = formatBrlFromDigits(String(cents));
+        } else if (id === 'pfCnpj') {
+          const d = onlyDigits(String(data[key]));
+          el.value = formatCpfCnpj(d);
+        } else {
+          el.value = String(data[key]);
+        }
+      }
     });
   }
 

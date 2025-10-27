@@ -112,6 +112,8 @@ h3 { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 700; color: var(--text); text-decoration: none; }
 .brand img { border-radius: 8px; }
 .brand-text { letter-spacing: 0.2px; }
+/* Restore brand text visibility */
+.brand-text { display: inline; }
 
 /* Brand logo transitions */
 .brand-logo { transition: opacity 200ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 220ms ease; will-change: transform, opacity; border-radius: 12px; }
@@ -335,6 +337,8 @@ section { scroll-margin-top: 88px; }
 .field { display: grid; gap: 0.35rem; }
 .field input { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.65rem 0.8rem; }
 .field select { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 12px; padding: 0.55rem 0.7rem; }
+.progress { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.progress-inner { height: 100%; width: 0%; background: var(--danger); transition: width 120ms ease, background-color 120ms ease; }
 .profile-form .actions { margin-top: 0.5rem; }
 .actions { display: grid; gap: 0.5rem; margin-top: 0.25rem; }
 /* Profile details actions layout */

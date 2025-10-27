@@ -11,7 +11,7 @@
   // Brand logo: default NexUs -U.jpg on desktop, swap to NexUsLogo.png on hover.
   // On mobile, always show NexUsLogo.png (no hover behavior).
   const brandLogos = Array.from(document.querySelectorAll('.brand-logo'));
-  const DEFAULT_LOGO_SRC = 'assets/NexUs -U.jpg';
+  const DEFAULT_LOGO_SRC = 'assets/NexUsLogo.png';
   const HOVER_LOGO_SRC = 'assets/NexUsLogo.png';
   function isMobileLike() { return window.matchMedia('(max-width: 919px)').matches; }
   function useMobileLogo(el) { el.setAttribute('src', HOVER_LOGO_SRC); }
