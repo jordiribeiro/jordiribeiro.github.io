@@ -66,6 +66,7 @@ import {
   let unsubNotifs = null;
   let unsubPendingFrom = null;
   let friendsCleanupInterval = null;
+  let connectRefreshInterval = null;
   let friendsRenderVersion = 0;
   async function markNotificationsRead() {
     const user = auth.currentUser; if (!user) return;
@@ -127,6 +128,7 @@ import {
       if (unsubNotifs) { unsubNotifs(); unsubNotifs = null; }
       if (unsubPendingFrom) { unsubPendingFrom(); unsubPendingFrom = null; }
       if (friendsCleanupInterval) { clearInterval(friendsCleanupInterval); friendsCleanupInterval = null; }
+      if (connectRefreshInterval) { clearInterval(connectRefreshInterval); connectRefreshInterval = null; }
       currentDm = { friendId: null };
       const grid = document.getElementById('trainingGrid'); if (grid) grid.innerHTML = '';
       const cnt = document.getElementById('trainingCount'); if (cnt) cnt.textContent = '0/20';
@@ -150,15 +152,16 @@ import {
             const exists = pdoc.exists();
             const pdata = exists ? pdoc.data() : {};
             const deactivated = !!(pdata && (pdata.deactivated || pdata.deletedAt));
-            return { fid, exists, deactivated, pdata };
+            const inactive = pdata && pdata.active === false;
+            return { fid, exists, deactivated, inactive, pdata };
           } catch { return { fid, exists: false, pdata: {} }; }
         }));
         // if a newer snapshot arrived while we were fetching, abort this render
         if (renderVersion !== friendsRenderVersion) return;
         if (friendsList) friendsList.innerHTML = '';
         const frag = document.createDocumentFragment();
-        for (const { fid, exists, deactivated, pdata } of results) {
-          if (!exists || deactivated) { continue; }
+        for (const { fid, exists, deactivated, inactive, pdata } of results) {
+          if (!exists || deactivated || inactive) { continue; }
           const li = document.createElement('li');
           li.innerHTML = `<span style="display:flex; align-items:center; gap:0.5rem;"><img alt="" src="${escapeHtml(pdata.photoData || pdata.photoURL || '')}" style="width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);" onerror="this.style.display='none'"/><strong>${escapeHtml(pdata.displayName || pdata.company || 'Membro')}</strong></span>
           <span class="list-actions"><button class="btn btn-primary" data-action="open-dm" data-id="${fid}" data-name="${escapeHtml(pdata.displayName || pdata.company || 'Membro')}">Chat</button><a class="btn btn-ghost" href="profile-details.html?uid=${fid}">Ver</a><button class="btn btn-ghost" data-action="remove-friend" data-id="${fid}">Remover</button></span>`;
@@ -222,6 +225,8 @@ import {
         snap.forEach((d) => {
           if (d.id === user.uid) return;
           const v = d.data();
+          // Skip profiles not active: deactivated/deleted or explicit active=false
+          if (v && (v.deactivated || v.deletedAt || v.active === false)) return;
           const isFriend = friendIds.has(d.id);
           const isPending = pendingIds.has(d.id);
           const li = document.createElement('li');
@@ -230,6 +235,9 @@ import {
           connectList && connectList.appendChild(li);
         });
       });
+      // Hard refresh the Connect list every 60s to avoid stale entries
+      if (connectRefreshInterval) { clearInterval(connectRefreshInterval); connectRefreshInterval = null; }
+      connectRefreshInterval = setInterval(() => { refreshConnectListHard().catch(() => {}); }, 60000);
     } catch (e) { console.error('profiles subscribe error', e); }
     // subscribe contacts
     unsubContacts = bindList(
@@ -536,6 +544,48 @@ import {
 
   // Public alias for clarity with product wording (deleted friends checker)
   async function verificarAmigosExcluidos() { return refreshFriendsHard(); }
+
+  // Hard refresh of Connect list (profiles), filtering only active users
+  async function refreshConnectListHard() {
+    try {
+      const user = auth.currentUser; if (!user) return;
+      const connectList = document.getElementById('connectList'); if (!connectList) return;
+      if (connectList) connectList.innerHTML = '';
+      const [profilesSnap, pendingTo, friendsSnap] = await Promise.all([
+        getDocs(query(collection(db, 'profiles'))),
+        getDocs(query(collection(db, 'notifications'), where('from', '==', user.uid), where('type', '==', 'friend_request'))),
+        getDocs(query(collection(db, 'friends'), where('owner', '==', user.uid)))
+      ]);
+      const pendingIds = new Set(); pendingTo.forEach(d2 => { const v = d2.data(); if (v && v.to) pendingIds.add(String(v.to)); });
+      const friendIds = new Set(); friendsSnap.forEach(docu => { const v = docu.data(); if (v && v.friendId) friendIds.add(String(v.friendId)); });
+      profilesSnap.forEach((d) => {
+        if (d.id === user.uid) return;
+        const v = d.data();
+        if (v && (v.deactivated || v.deletedAt || v.active === false)) return;
+        const isFriend = friendIds.has(d.id);
+        const isPending = pendingIds.has(d.id);
+        const li = document.createElement('li');
+        li.innerHTML = `<span style=\"display:flex; align-items:center; gap:0.5rem;\"><img alt=\"\" src=\"${escapeHtml(v.photoData || v.photoURL || '')}\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover; border:1px solid var(--border);\" onerror=\"this.style.display='none'\"/><strong>${escapeHtml(v.displayName || v.company || 'Membro')}</strong></span>
+        <span class=\"list-actions\"><a class=\"btn btn-ghost\" href=\"profile-details.html?uid=${d.id}\">Ver</a><button class=\"btn ${isFriend ? 'btn-outline' : (isPending ? 'btn-outline' : 'btn-primary')}\" data-action=\"add-friend\" data-id=\"${d.id}\" data-state=\"${isFriend ? 'friend' : (isPending ? 'pending' : 'idle')}\" ${isFriend ? 'disabled' : ''}>${isFriend ? 'Conectado' : (isPending ? 'Solicitação enviada' : 'Conectar')}</button></span>`;
+        connectList && connectList.appendChild(li);
+      });
+    } catch {}
+  }
+
+  // --- Admin utility: set active=true in all existing profiles (run once via console) ---
+  async function setActiveTrueForAllProfiles() {
+    try {
+      const snap = await getDocs(query(collection(db, 'profiles')));
+      const ops = [];
+      snap.forEach((d) => {
+        const v = d.data();
+        if (!v || v.active !== true) ops.push(setDoc(doc(db, 'profiles', d.id), { active: true }, { merge: true }));
+      });
+      if (ops.length) await Promise.all(ops);
+      return { updated: ops.length };
+    } catch (e) { console.error('setActiveTrueForAllProfiles error', e); return { updated: 0, error: String(e && e.message || e) }; }
+  }
+  try { if (typeof window !== 'undefined') { window.nexusSetActiveAll = setActiveTrueForAllProfiles; } } catch {}
 
   // Minimal Markdown renderer (safe): supports paragraphs, lists, **bold**, `code`, ```code blocks```
   function renderMarkdownToHtml(text) {

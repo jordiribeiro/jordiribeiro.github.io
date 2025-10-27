@@ -96,7 +96,7 @@ import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       if (name) { try { await updateProfile(cred.user, { displayName: name }); } catch {} }
       // create base profile doc
-      await setDoc(doc(db, 'profiles', cred.user.uid), { uid: cred.user.uid, displayName: name || '', createdAt: serverTimestamp() }, { merge: true });
+      await setDoc(doc(db, 'profiles', cred.user.uid), { uid: cred.user.uid, displayName: name || '', createdAt: serverTimestamp(), active: true }, { merge: true });
       // tentar enviar email de boas-vindas; se não houver endpoint, envia verificação do Firebase como fallback
       let sent = false;
       try { sent = await sendWelcomeEmail(email, name); } catch {}
