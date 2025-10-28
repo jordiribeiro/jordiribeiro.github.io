@@ -7,6 +7,7 @@
     <title>NexUS — App do Membro</title>
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles/styles.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script defer src="scripts/script.js"></script>
     <script type="module" src="scripts/auth.js"></script>
     <script type="module" src="scripts/app.js"></script>
@@ -132,6 +133,9 @@
             <div class="grid-2">
               <div>
                 <h3>Contatos</h3>
+                <div class="crm-toolbar" aria-label="Ferramentas de contatos">
+                  <input type="text" id="contactsSearch" placeholder="Buscar contato..." aria-label="Buscar contato" />
+                </div>
                 <form id="contactForm" class="cta-form">
                   <input type="text" name="name" placeholder="Nome" required />
                   <input type="email" name="email" placeholder="Email" required />
@@ -151,17 +155,36 @@
               </div>
               <div>
                 <h3>Negociações</h3>
+                <div class="crm-toolbar" aria-label="Ferramentas de negociações">
+                  <input type="text" id="dealsSearch" placeholder="Buscar negociação..." aria-label="Buscar negociação" />
+                  <select id="dealsStatusFilter" aria-label="Filtrar status">
+                    <option value="all">Todos</option>
+                    <option value="open">Abertas</option>
+                    <option value="won">Ganhas</option>
+                    <option value="lost">Perdidas</option>
+                  </select>
+                  <select id="dealsSort" aria-label="Ordenar">
+                    <option value="recent">Mais recentes</option>
+                    <option value="value-desc">Maior valor</option>
+                    <option value="value-asc">Menor valor</option>
+                    <option value="title-asc">Título A-Z</option>
+                  </select>
+                </div>
                 <form id="dealForm" class="cta-form">
                   <input type="text" name="title" placeholder="Título" required />
                   <input type="number" name="value" placeholder="Valor (R$)" required />
                   <button class="btn btn-primary" type="submit">Salvar</button>
                 </form>
+                <div class="grid-3" style="margin-top:0.5rem;">
+                  <div class="card stat"><p class="stat-label">Conversão</p><p class="stat-num" id="crmConvRate">0%</p></div>
+                  <div class="card stat"><p class="stat-label">Pipeline aberto</p><p class="stat-num" id="crmOpenPipeline">R$ 0</p></div>
+                </div>
                 <details open id="dealsPanel" style="margin-top:0.75rem;">
                   <summary>Negociações (<span id="dealsCount">0</span>)</summary>
                   <div class="table-wrap">
                     <table class="table" aria-label="Negociações">
                       <thead>
-                        <tr><th>Título</th><th>Valor</th><th>Status</th><th style="width:140px;">Ações</th></tr>
+                        <tr><th>Título</th><th>Valor</th><th>Status</th><th style="width:240px;">Ações</th></tr>
                       </thead>
                       <tbody id="dealsTbody"></tbody>
                     </table>
@@ -325,6 +348,52 @@
           </div>
           <input type="hidden" id="dmEditingId" />
           <p class="form-note" id="dmNote" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRM Modal (for editar contato/negociação) -->
+    <div class="modal" id="crmModal" role="dialog" aria-modal="true" aria-labelledby="crmType" hidden>
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-dialog" role="document">
+        <button class="modal-close" id="crmClose" aria-label="Fechar" data-close="true">×</button>
+        <div class="modal-header">
+          <h2 id="crmType">CRM</h2>
+        </div>
+        <div class="modal-body">
+          <form id="crmForm">
+            <div id="crmContact" class="grid-2" hidden>
+              <div class="field">
+                <label for="crmName">Nome</label>
+                <input id="crmName" />
+              </div>
+              <div class="field">
+                <label for="crmEmail">Email</label>
+                <input id="crmEmail" />
+              </div>
+            </div>
+            <div id="crmDeal" class="grid-2" hidden>
+              <div class="field">
+                <label for="crmTitle">Título</label>
+                <input id="crmTitle" />
+              </div>
+              <div class="field">
+                <label for="crmValue">Valor (R$)</label>
+                <input id="crmValue" type="number" min="0" step="1" />
+              </div>
+              <div class="field">
+                <label for="crmStatus">Status</label>
+                <select id="crmStatus">
+                  <option value="open">Aberta</option>
+                  <option value="won">Ganha</option>
+                  <option value="lost">Perdida</option>
+                </select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Salvar</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

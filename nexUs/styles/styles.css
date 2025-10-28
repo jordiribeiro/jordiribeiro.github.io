@@ -355,12 +355,31 @@ section { scroll-margin-top: 88px; }
 .badge { display: inline-block; min-width: 18px; padding: 0 6px; height: 18px; border-radius: 999px; background: var(--danger); color: #fff; font-size: 12px; text-align: center; line-height: 18px; margin-left: 4px; }
 .notif-list .list-actions .btn { padding: 0.3rem 0.5rem; }
 
+/* Onboarding tour */
+.tour-overlay { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+.tour-card { width: min(640px, calc(100% - 2rem)); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); padding: 1rem; display: grid; gap: 0.5rem; }
+.tour-title { font-size: 1.1rem; font-weight: 700; }
+.tour-body { color: var(--muted); }
+.tour-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.tour-progress { font-size: 0.85rem; color: var(--muted); margin-right: auto; }
+@media (max-width: 520px) {
+  .tour-card { padding: 0.85rem; }
+}
+/* Highlight target element during tour */
+.tour-highlight { position: relative !important; z-index: 130 !important; outline: 3px solid #0E5CF0; border-radius: 12px; box-shadow: 0 0 0 6px rgba(14,92,240,0.25); transition: box-shadow 160ms ease, outline-color 160ms ease; }
+
 /* Tables */
 .table-wrap { width: 100%; overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--bg); }
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
 .table thead th { background: var(--surface); font-weight: 700; }
 .table tbody tr:last-child td { border-bottom: none; }
+.crm-toolbar { display: flex; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.crm-toolbar input, .crm-toolbar select { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 10px; padding: 0.5rem 0.6rem; }
+.badge-status { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+.badge-open { background: color-mix(in oklab, var(--brand-500), var(--surface) 85%); color: var(--brand-700); }
+.badge-won { background: #DCFCE7; color: #166534; }
+.badge-lost { background: #FEE2E2; color: #991B1B; }
 
 /* Plans comparison table (mobile-first) */
 .table-compare th:first-child, .table-compare td:first-child { position: sticky; left: 0; background: var(--bg); z-index: 1; }

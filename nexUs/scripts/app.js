@@ -290,6 +290,9 @@ import {
       console.error('chat subscribe error', e);
     }
 
+    // show onboarding tour for new/retroactive users
+    try { if (user) { maybeShowTutorial(user.uid); } } catch {}
+
     // subscribe training videos (training/{uid}/videos)
     try {
       const vidsQ = query(collection(db, 'training', user.uid, 'videos'), orderBy('createdAt', 'desc'));
@@ -373,7 +376,7 @@ import {
     <td>${escapeHtml(item.email)}</td>
     <td>
       <span class="list-actions">
-        <button class="btn btn-ghost" data-action="view" data-type="contact" data-id="${item.id}">Ver</button>
+        <button class="btn btn-ghost" data-action="edit" data-type="contact" data-id="${item.id}">Editar</button>
         <button class="btn btn-ghost" data-action="delete" data-type="contact" data-id="${item.id}">Excluir</button>
       </span>
     </td>`;
@@ -382,12 +385,17 @@ import {
 
   function renderDealItem(item) {
     const tr = document.createElement('tr');
+    const status = String(item.status || 'open');
+    const statusClass = status === 'won' ? 'badge-won' : (status === 'lost' ? 'badge-lost' : 'badge-open');
     tr.innerHTML = `<td>${escapeHtml(item.title)}</td>
     <td>R$ ${Number(item.value || 0).toLocaleString('pt-BR')}</td>
-    <td>${escapeHtml(item.status || 'open')}</td>
+    <td><span class="badge-status ${statusClass}">${escapeHtml(status)}</span></td>
     <td>
       <span class="list-actions">
         <button class="btn btn-ghost" data-action="view" data-type="deal" data-id="${item.id}">Ver</button>
+        <button class="btn btn-ghost" data-action="deal-status" data-id="${item.id}" data-to="open">Abrir</button>
+        <button class="btn btn-ghost" data-action="deal-status" data-id="${item.id}" data-to="won">Ganhar</button>
+        <button class="btn btn-ghost" data-action="deal-status" data-id="${item.id}" data-to="lost">Perder</button>
         <button class="btn btn-ghost" data-action="delete" data-type="deal" data-id="${item.id}">Excluir</button>
       </span>
     </td>`;
@@ -397,6 +405,17 @@ import {
   function updatePipeline(items) {
     const total = items.reduce((sum, it) => sum + Number(it.value || 0), 0);
     setMetrics(null, items.length, total);
+    // CRM KPIs
+    try {
+      const won = items.filter(it => String(it.status || 'open') === 'won').length;
+      const all = items.length || 1;
+      const conv = Math.round((won / all) * 100);
+      const openSum = items.filter(it => String(it.status || 'open') === 'open').reduce((s, it) => s + Number(it.value || 0), 0);
+      const convEl = document.getElementById('crmConvRate'); if (convEl) convEl.textContent = `${conv}%`;
+      const pipeEl = document.getElementById('crmOpenPipeline'); if (pipeEl) pipeEl.textContent = `R$ ${Number(openSum).toLocaleString('pt-BR')}`;
+      // re-apply filters/sort after any list change
+      applyDealsFilterAndSort();
+    } catch {}
   }
 
   function setMetrics(contacts, deals, pipeline) {
@@ -740,9 +759,59 @@ import {
     const action = btn.getAttribute('data-action');
     const id = btn.getAttribute('data-id');
     if (!id) return;
-    if (action === 'view') openCrmModal('contact', contactsMap.get(id));
+    if (action === 'view' || action === 'edit') openCrmModal('contact', contactsMap.get(id));
     if (action === 'delete') await deleteDoc(doc(db, 'contacts', id));
   });
+
+  // CRM: filters and sorting
+  const contactsSearch = document.getElementById('contactsSearch');
+  const dealsSearch = document.getElementById('dealsSearch');
+  const dealsStatusFilter = document.getElementById('dealsStatusFilter');
+  const dealsSort = document.getElementById('dealsSort');
+
+  function applyContactsFilter() {
+    const q = (contactsSearch && contactsSearch.value || '').toLowerCase();
+    if (!contactsTbody) return;
+    Array.from(contactsTbody.querySelectorAll('tr')).forEach((tr) => {
+      const name = (tr.querySelector('td:nth-child(1)')?.textContent || '').toLowerCase();
+      const email = (tr.querySelector('td:nth-child(2)')?.textContent || '').toLowerCase();
+      tr.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+    });
+  }
+  function applyDealsFilterAndSort() {
+    if (!dealsTbody) return;
+    const searchQ = (dealsSearch && dealsSearch.value || '').toLowerCase();
+    const statusQ = (dealsStatusFilter && dealsStatusFilter.value) || 'all';
+    const sortKey = (dealsSort && dealsSort.value) || 'recent';
+    const rows = Array.from(dealsTbody.querySelectorAll('tr'));
+    rows.forEach((tr) => {
+      const title = (tr.querySelector('td:nth-child(1)')?.textContent || '').toLowerCase();
+      const status = (tr.querySelector('.badge-status')?.textContent || 'open').toLowerCase();
+      const okSearch = !searchQ || title.includes(searchQ);
+      const okStatus = statusQ === 'all' || status === statusQ;
+      tr.style.display = (okSearch && okStatus) ? '' : 'none';
+    });
+    const visible = rows.filter(tr => tr.style.display !== 'none');
+    visible.sort((a, b) => {
+      if (sortKey === 'value-desc' || sortKey === 'value-asc') {
+        const va = Number((a.querySelector('td:nth-child(2)')?.textContent || '0').replace(/[^0-9,.-]/g, '').replace('.', '').replace(',', '.')) || 0;
+        const vb = Number((b.querySelector('td:nth-child(2)')?.textContent || '0').replace(/[^0-9,.-]/g, '').replace('.', '').replace(',', '.')) || 0;
+        return sortKey === 'value-desc' ? vb - va : va - vb;
+      }
+      if (sortKey === 'title-asc') {
+        const ta = (a.querySelector('td:nth-child(1)')?.textContent || '').toLowerCase();
+        const tb = (b.querySelector('td:nth-child(1)')?.textContent || '').toLowerCase();
+        return ta.localeCompare(tb);
+      }
+      // recent: keep as is (already by createdAt via bindList)
+      return 0;
+    });
+    visible.forEach(tr => dealsTbody.appendChild(tr));
+  }
+  contactsSearch?.addEventListener('input', applyContactsFilter);
+  dealsSearch?.addEventListener('input', applyDealsFilterAndSort);
+  dealsStatusFilter?.addEventListener('change', applyDealsFilterAndSort);
+  dealsSort?.addEventListener('change', applyDealsFilterAndSort);
 
   // Training: add/remove videos
   const trainingForm = document.getElementById('trainingForm');
@@ -888,6 +957,10 @@ import {
     if (!id) return;
     if (action === 'view') openCrmModal('deal', dealsMap.get(id));
     if (action === 'delete') await deleteDoc(doc(db, 'deals', id));
+    if (action === 'deal-status') {
+      const to = btn.getAttribute('data-to') || 'open';
+      await updateDoc(doc(db, 'deals', id), { status: to });
+    }
   });
 
   // Friends/connect actions
@@ -1391,6 +1464,82 @@ import {
     if (elE) elE.textContent = exemption;
     if (elD) elD.textContent = String(days);
   }
+
+  // --- Onboarding Tour (jQuery-based, responsive, skippable) ---
+  const TOUR_KEY = 'nexus.tutorial.ok';
+  async function maybeShowTutorial(uid) {
+    try {
+      if (!uid) return;
+      const p = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js');
+      const ref = p.doc(db, 'profiles', uid);
+      const snap = await p.getDoc(ref);
+      const data = snap.exists() ? snap.data() : null;
+      if (data && data.tutorialCompletedAt) { return; }
+      if (typeof window.$ !== 'function') return; // needs jQuery
+      buildAndRunTour(uid);
+    } catch {}
+  }
+  function buildAndRunTour(uid) {
+    const $ = window.$;
+    const steps = [
+      { t: 'Bem-vindo(a) ao NexUS', b: 'Aqui você gerencia perfil, CRM, IA, treinamentos, amigos e conexões.' },
+      { t: 'Perfil', b: 'Complete os dados da sua empresa para habilitar benefícios e métricas.', sel: '#tab-perfil-tab', before: () => document.getElementById('tab-perfil-tab')?.click() },
+      { t: 'CRM — Contatos', b: 'Cadastre contatos e gerencie seu relacionamento.', sel: '#tab-crm-tab', before: () => document.getElementById('tab-crm-tab')?.click() },
+      { t: 'CRM — Negociações', b: 'Acompanhe status e valor do pipeline.', sel: '#dealsStatusFilter', before: () => document.getElementById('tab-crm-tab')?.click() },
+      { t: 'Treinamentos', b: 'Salve vídeos e conteúdos para acelerar seu aprendizado.', sel: '#tab-treinamentos-tab', before: () => document.getElementById('tab-treinamentos-tab')?.click() },
+      { t: 'IA', b: 'Gere planos e respostas com IA para acelerar decisões.', sel: '#tab-ia-tab', before: () => document.getElementById('tab-ia-tab')?.click() },
+      { t: 'Amigos', b: 'Converse com sua rede.', sel: '#tab-amigos-tab', before: () => document.getElementById('tab-amigos-tab')?.click() },
+      { t: 'Conectar', b: 'Envie conexões para colaborar com a comunidade.', sel: '#tab-conectar-tab', before: () => document.getElementById('tab-conectar-tab')?.click() }
+    ];
+    const $ov = $('<div class="tour-overlay" id="tourOverlay" />');
+    const $card = $('<div class="tour-card" />');
+    const $title = $('<div class="tour-title" />');
+    const $body = $('<div class="tour-body" />');
+    const $actions = $('<div class="tour-actions" />');
+    const $progress = $('<div class="tour-progress" />');
+    const $skip = $('<button class="btn btn-ghost" type="button">Pular</button>');
+    const $prev = $('<button class="btn btn-outline" type="button">Anterior</button>');
+    const $next = $('<button class="btn btn-primary" type="button">Próximo</button>');
+    let i = 0;
+    let lastHi = null;
+    function clearHighlight() { if (lastHi) { lastHi.classList.remove('tour-highlight'); lastHi = null; } }
+    function render() {
+      const s = steps[i];
+      $title.text(s.t);
+      $body.text(s.b);
+      $progress.text(`${i + 1}/${steps.length}`);
+      $prev.prop('disabled', i === 0);
+      $next.text(i === steps.length - 1 ? 'Concluir' : 'Próximo');
+      clearHighlight();
+      try { s.before && s.before(); } catch {}
+      setTimeout(() => {
+        if (!s.sel) return;
+        const el = document.querySelector(s.sel) || document.querySelector(s.sel.replace('-tab',''));
+        if (el instanceof HTMLElement) {
+          el.classList.add('tour-highlight'); lastHi = el;
+          try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch {}
+        }
+      }, 50);
+    }
+    async function finish(saved) {
+      try {
+        localStorage.setItem(TOUR_KEY, '1');
+        if (saved) { await setDoc(doc(db, 'profiles', uid), { tutorialCompletedAt: serverTimestamp() }, { merge: true }); }
+      } catch {}
+      clearHighlight();
+      $ov.remove(); document.body.style.overflow = '';
+    }
+    $skip.on('click', () => finish(true));
+    $prev.on('click', () => { if (i > 0) { i--; render(); } });
+    $next.on('click', () => { if (i < steps.length - 1) { i++; render(); } else { finish(true); } });
+    $actions.append($progress, $skip, $prev, $next);
+    $card.append($title, $body, $actions);
+    $ov.append($card);
+    $('body').append($ov);
+    document.body.style.overflow = 'hidden';
+    render();
+  }
+  try { if (typeof window !== 'undefined') { window.nexusShowTutorial = () => { const u = auth.currentUser; if (u) buildAndRunTour(u.uid); }; } } catch {}
 })();
 
 
